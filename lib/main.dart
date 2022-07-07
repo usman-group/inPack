@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:in_pack/chat_panel.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:in_pack/user.dart';
-import 'package:in_pack/chat_panel.dart';
 import 'package:in_pack/list_panel.dart';
 import 'package:in_pack/colors.dart' as colors;
 import 'firebase_options.dart';
