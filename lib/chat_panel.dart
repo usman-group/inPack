@@ -25,12 +25,10 @@ class _ChatPanelState extends State<ChatPanel> {
   final _user = const types.User(id: '82091008-a484-4a89-ae75-a22bf8d6f3ac');
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    body: Chat(
+  Widget build(BuildContext context) => Chat(
       messages: _messages,
       onSendPressed: _handleSendPressed,
       user: _user,
-    ),
   );
 
   void _addMessage(types.Message message) {

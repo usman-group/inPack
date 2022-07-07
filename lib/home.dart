@@ -2,10 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:in_pack/user.dart';
 import 'package:in_pack/chat_panel.dart';
-
-
+import 'package:in_pack/list_panel.dart';
+import 'package:in_pack/colors.dart' as colors;
+import 'firebase_options.dart';
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -14,7 +16,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Widget> bodyWidgets = [ChatPanel(), UserPanel(),];
+  List<Widget> bodyWidgets = [
+    const ChatPanel(),
+    const UserPanel(),
+    const ListPanel()
+  ];
   int _receivedCounter = 0;
   int _sharedCounter = 0;
   String _pack = '';
@@ -22,13 +28,20 @@ class _HomeState extends State<Home> {
 
   void _initFirebase() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp().then((value) { if (kDebugMode) print('Firebase initialised');});
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    ).then((value) { if (kDebugMode) print('Firebase initialised $value');});
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.black,
+      )
+    );
     _initFirebase();
   }
 
@@ -44,14 +57,21 @@ class _HomeState extends State<Home> {
       body: bodyWidgets[_pageIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.chat_outlined), label: 'Chat'),
-          BottomNavigationBarItem(icon: Icon(Icons.maps_home_work), label: 'Map')
+          BottomNavigationBarItem(
+              icon: Icon(Icons.chat_outlined, color: Colors.white,), label: 'Chat', backgroundColor: Colors.white),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person, color: Colors.white,), label: 'User',),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.list, color: Colors.white,), label: 'Packs'),
         ],
         onTap: (int idx){
           setState(() {
             _pageIndex = idx;
           });
         },
+        backgroundColor: colors.darkBrown,
+        unselectedItemColor: Colors.white,
+        selectedItemColor: Colors.purpleAccent,
         currentIndex: _pageIndex,
       ),
     );

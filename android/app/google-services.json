@@ -29,6 +29,13 @@
             {
               "client_id": "460090645483-k6kr7o1if4jvu66kp3bhvhdgasaki3fg.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "460090645483-2ilss3bp4rlcmck23fihsckdr8osst7j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.usmangroup.inpack"
+              }
             }
           ]
         }
