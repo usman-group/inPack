@@ -1,16 +1,7 @@
-# in_pack
+# in_pack (вПачке)
 
-A new Flutter project.
+Приложение для стрелков сигарет написанное на Flutter.
 
-## Getting Started
+## В скором времени будет доступно на Google Play Market и AppStore
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![крутая картинка](https://sun9-79.userapi.com/impf/_oEnVEqQSGzbhA4aNj3zvBvihjgxCaGPHmfPPQ/saN7liJP4a4.jpg?size=1080x888&quality=95&sign=a366e752faf41b93cbac69c3aae79a87&type=album)
