@@ -7,6 +7,7 @@ import 'package:in_pack/user.dart';
 import 'package:in_pack/list_panel.dart';
 import 'package:in_pack/colors.dart' as colors;
 import 'firebase_options.dart';
+import 'package:in_pack/registration_panel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 void main() => runApp(const MaterialApp(
@@ -25,16 +26,17 @@ class _HomeState extends State<Home> {
   List<Widget> bodyWidgets = [
     const ChatPanel(),
     const UserPanel(),
-    const ListPanel()
+    const ListPanel(),
+    const RegisterPanel(),
   ];
   int _receivedCounter = 0;
   int _sharedCounter = 0;
   String _pack = '';
   int _pageIndex = 0;
 
-  void _initFirebase() async {
+  void _initFirebase() {
     WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
+    Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     ).then((value) { if (kDebugMode) print('Firebase initialised $value');});
   }
@@ -62,22 +64,24 @@ class _HomeState extends State<Home> {
       ),
       body: bodyWidgets[_pageIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: const [
+        items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.chat_outlined, color: Colors.white,), label: 'Chat', backgroundColor: Colors.white),
+              icon: Icon(Icons.chat_outlined, color: Colors.brown,), label: 'Chat', backgroundColor: Colors.white),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: Colors.white,), label: 'User',),
+            icon: Icon(Icons.person, color: Colors.brown,), label: 'User',),
           BottomNavigationBarItem(
-              icon: Icon(Icons.list, color: Colors.white,), label: 'Packs'),
+              icon: Icon(Icons.list, color: Colors.brown,), label: 'Packs'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.how_to_reg, color: Colors.brown,), label: 'Register'),
         ],
         onTap: (int idx){
           setState(() {
             _pageIndex = idx;
           });
         },
-        backgroundColor: colors.darkBrown,
-        unselectedItemColor: Colors.white,
-        selectedItemColor: Colors.purpleAccent,
+        backgroundColor: Colors.white,
+        unselectedItemColor: Colors.brown,
+        selectedItemColor: colors.darkBrown,
         currentIndex: _pageIndex,
       ),
     );
