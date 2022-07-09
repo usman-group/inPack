@@ -12,7 +12,6 @@ String randomString() {
   return base64UrlEncode(values);
 }
 
-
 class ChatPanel extends StatefulWidget {
   const ChatPanel({super.key});
 
@@ -26,10 +25,10 @@ class _ChatPanelState extends State<ChatPanel> {
 
   @override
   Widget build(BuildContext context) => Chat(
-      messages: _messages,
-      onSendPressed: _handleSendPressed,
-      user: _user,
-  );
+        messages: _messages,
+        onSendPressed: _handleSendPressed,
+        user: _user,
+      );
 
   void _addMessage(types.Message message) {
     setState(() {

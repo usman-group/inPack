@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart';
 
 class RegisterPanel extends StatefulWidget {
   const RegisterPanel({Key? key}) : super(key: key);

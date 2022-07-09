@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:in_pack/chat_panel.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
-import 'package:in_pack/user.dart';
-import 'package:in_pack/list_panel.dart';
 import 'package:in_pack/colors.dart' as colors;
 import 'firebase_options.dart';
-import 'package:in_pack/registration_panel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-void main() => runApp(const MaterialApp(
-  home: Home(),
-));
+// import pages
+import './pages/registration_page.dart';
+import './pages/user_page.dart';
+import './pages/chat_page.dart';
+import './pages/list_page.dart';
 
+void main() => runApp(const MaterialApp(
+      home: Home(),
+    ));
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -29,27 +30,24 @@ class _HomeState extends State<Home> {
     const ListPanel(),
     const RegisterPanel(),
   ];
-  int _receivedCounter = 0;
-  int _sharedCounter = 0;
-  String _pack = '';
   int _pageIndex = 0;
 
   void _initFirebase() {
     WidgetsFlutterBinding.ensureInitialized();
     Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
-    ).then((value) { if (kDebugMode) print('Firebase initialised $value');});
+    ).then((value) {
+      if (kDebugMode) print('Firebase initialised $value');
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    SystemChrome.setSystemUIOverlayStyle(
-        const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          systemNavigationBarColor: Colors.black,
-        )
-    );
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.black,
+    ));
     _initFirebase();
   }
 
@@ -64,17 +62,35 @@ class _HomeState extends State<Home> {
       ),
       body: bodyWidgets[_pageIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: [
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(Icons.chat_outlined, color: Colors.brown,), label: 'Chat', backgroundColor: Colors.white),
+              icon: Icon(
+                Icons.chat_outlined,
+                color: Colors.brown,
+              ),
+              label: 'Chat',
+              backgroundColor: Colors.white),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: Colors.brown,), label: 'User',),
+            icon: Icon(
+              Icons.person,
+              color: Colors.brown,
+            ),
+            label: 'User',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.list, color: Colors.brown,), label: 'Packs'),
+              icon: Icon(
+                Icons.list,
+                color: Colors.brown,
+              ),
+              label: 'Packs'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.how_to_reg, color: Colors.brown,), label: 'Register'),
+              icon: Icon(
+                Icons.how_to_reg,
+                color: Colors.brown,
+              ),
+              label: 'Register'),
         ],
-        onTap: (int idx){
+        onTap: (int idx) {
           setState(() {
             _pageIndex = idx;
           });
@@ -87,5 +103,3 @@ class _HomeState extends State<Home> {
     );
   }
 }
-
-
