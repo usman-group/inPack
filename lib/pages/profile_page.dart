@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:in_pack/widgets/profile/profile_picture.dart';
+
+const String defaultImage = 'https://sun9-47.userapi.com/c10668/u118752696/a_be977d28.jpg';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -11,14 +14,13 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final User currentUser = FirebaseAuth.instance.currentUser!;
   late ValueNotifier<String> _userName;
-  late ValueNotifier<NetworkImage> _profileImage;
+  late String? _userImageUrl;
 
   @override
   void initState() {
     _userName = ValueNotifier<String>(currentUser.displayName ?? 'Нет имени');
-    _profileImage = ValueNotifier<NetworkImage>(NetworkImage(FirebaseAuth
-            .instance.currentUser?.photoURL ??
-        'http://sun9-77.userapi.com/s/v1/if1/_hMsF113Bel6q-EzkgvZVb156c35SDK58rmszJ_yVbvHhKNd8hBcIhuNS3Wbg6QXhwTdZQ.jpg?size=200x200&quality=96&crop=133,25,534,534&ava=1'));
+    _userImageUrl = FirebaseAuth.instance.currentUser!.photoURL;
+
     super.initState();
   }
 
@@ -54,14 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
         children: [
           const Padding(padding: EdgeInsets.only(top: 20)),
-          ValueListenableBuilder(
-              valueListenable: _profileImage,
-              builder: (context, NetworkImage value, child) {
-                return CircleAvatar(
-                  backgroundImage: value,
-                  radius: 40,
-                );
-              }),
+          ProfilePicture(profileNetworkImage: NetworkImage(_userImageUrl ?? defaultImage)),
           const Padding(padding: EdgeInsets.only(top: 10)),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
