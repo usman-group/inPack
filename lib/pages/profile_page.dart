@@ -20,7 +20,6 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     _userName = ValueNotifier<String>(currentUser.displayName ?? 'Нет имени');
     _userImageUrl = FirebaseAuth.instance.currentUser!.photoURL;
-
     super.initState();
   }
 
