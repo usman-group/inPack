@@ -1,16 +1,126 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:in_pack/utils/show_error_dialog.dart';
 
-class RegisterPanel extends StatefulWidget {
-  const RegisterPanel({Key? key}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  State<RegisterPanel> createState() => _RegisterPanelState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPanelState extends State<RegisterPanel> {
+class _RegisterPageState extends State<RegisterPage> {
   String _email = '', _password = '';
   late UserCredential userCredential;
+
+  _signIn() async {
+    try {
+      userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: _email, password: _password)
+          .then((value) {
+        setState(() {});
+        return value;
+      });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'wrong-password') {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Неправильный пароль'),
+                actions: [
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Ок')),
+                ],
+              );
+            });
+      } else if (e.code == 'user-not-found') {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Пользователь не найден'),
+                actions: [
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Ок')),
+                ],
+              );
+            });
+      } else {
+        showErrorDialog(context, 'Пукпукпук $e');
+      }
+    } catch (e) {
+      showErrorDialog(context, e);
+    }
+  }
+
+  _register() async {
+    try {
+      userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: _email, password: _password);
+      userCredential.user!.sendEmailVerification();
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Пользователь успешно зарегистрирован'),
+              content: Text('Пользователь с email: '
+                  '${userCredential.user!.email} успешно '
+                  'зарегистрирован. На вашу почту направлено '
+                  'письмо для активации'),
+              actions: [
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Охуенно!')),
+              ],
+            );
+          });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Слабый пароль'),
+                actions: [
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Ок')),
+                ],
+              );
+            });
+      } else if (e.code == 'email-already-in-use') {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Данный email уже используется'),
+                actions: [
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Ок')),
+                ],
+              );
+            });
+      }
+    } catch (e) {
+      showErrorDialog(context, e);
+    }
+    if (!mounted) return;
+    showErrorDialog(context, 'userCredential: $userCredential');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,67 +166,7 @@ class _RegisterPanelState extends State<RegisterPanel> {
             ),
             ElevatedButton(
                 onPressed: () async {
-                  try {
-                    userCredential = await FirebaseAuth.instance
-                        .createUserWithEmailAndPassword(
-                            email: _email, password: _password);
-                    userCredential.user!.sendEmailVerification();
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text(
-                                'Пользователь успешно зарегистрирован'),
-                            content: Text('Пользователь с email: '
-                                '${userCredential.user!.email} успешно '
-                                'зарегистрирован. На вашу почту направлено '
-                                'письмо для активации'),
-                            actions: [
-                              ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Охуенно!')),
-                            ],
-                          );
-                        });
-                  } on FirebaseAuthException catch (e) {
-                    if (e.code == 'weak-password') {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Слабый пароль'),
-                              actions: [
-                                ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Ок')),
-                              ],
-                            );
-                          });
-                    } else if (e.code == 'email-already-in-use') {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title:
-                                  const Text('Данный email уже используется'),
-                              actions: [
-                                ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Ок')),
-                              ],
-                            );
-                          });
-                    }
-                  } catch (e) {
-                    print(e);
-                  }
-                  print('userCredential: $userCredential');
+                  _register();
                 },
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50),
@@ -131,47 +181,7 @@ class _RegisterPanelState extends State<RegisterPanel> {
             const Spacer(),
             ElevatedButton(
                 onPressed: () async {
-                  try {
-                    userCredential = await FirebaseAuth.instance
-                        .signInWithEmailAndPassword(
-                            email: _email, password: _password);
-                  } on FirebaseAuthException catch (e) {
-                    if (e.code == 'wrong-password') {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Неправильный пароль'),
-                              actions: [
-                                ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Ок')),
-                              ],
-                            );
-                          });
-                    } else if (e.code == 'user-not-found') {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Пользователь не найден'),
-                              actions: [
-                                ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Ок')),
-                              ],
-                            );
-                          });
-                    } else {
-                      print('Пукпукпук $e');
-                    }
-                  } catch (e) {
-                    print(e);
-                  }
+                  _signIn();
                 },
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50),

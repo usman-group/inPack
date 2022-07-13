@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'package:in_pack/utils/show_error_dialog.dart';
 
 // For the testing purposes, you should probably use https://pub.dev/packages/uuid.
 String randomString() {
@@ -20,30 +22,57 @@ class ChatPanel extends StatefulWidget {
 }
 
 class _ChatPanelState extends State<ChatPanel> {
-  final List<types.Message> _messages = [];
-  final _user = const types.User(id: '82091008-a484-4a89-ae75-a22bf8d6f3ac');
 
   @override
-  Widget build(BuildContext context) => Chat(
-        messages: _messages,
-        onSendPressed: _handleSendPressed,
-        user: _user,
-      );
-
-  void _addMessage(types.Message message) {
-    setState(() {
-      _messages.insert(0, message);
-    });
+  void initState() {
+    // createUser();
+    super.initState();
   }
 
-  void _handleSendPressed(types.PartialText message) {
-    final textMessage = types.TextMessage(
-      author: _user,
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-      id: randomString(),
-      text: message.text,
-    );
+  @override
+  Widget build(BuildContext context) {
+    return UsersPage();
+  }
 
-    _addMessage(textMessage);
+
+}
+
+
+class UsersPage extends StatelessWidget {
+  UsersPage({Key? key}) : super(key: key);
+
+  // Create a user with an ID of UID if you don't use `FirebaseChatCore.instance.users()` stream
+  final _fUser = FirebaseAuth.instance.currentUser;
+
+  createUser(BuildContext context) async{
+    try {
+      await FirebaseChatCore.instance.createUserInFirestore(
+        types.User(
+          firstName: 'John',
+          id: _fUser!.uid, // UID from Firebase Authentication
+          imageUrl: 'https://i.pravatar.cc/300',
+          lastName: 'Doe',
+        ),
+      );
+    } catch (e){
+      showErrorDialog(context, e);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: StreamBuilder<List<types.User>>(
+        stream: FirebaseChatCore.instance.users(),
+        initialData: const [],
+        builder: (context, snapshot) {
+          return Text(snapshot.data.toString());
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async => await createUser(context),
+        child: const Icon(Icons.plus_one),
+      ),
+    );
   }
 }

@@ -18,7 +18,7 @@ class _ListPanelState extends State<ListPanel> {
         stream: FirebaseFirestore.instance.collection('packs').snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
-            return const Center(child: Text('Нет записей'));
+            return const Center(child: CircularProgressIndicator());
           }
           return ListView.builder(
               itemCount: snapshot.data?.docs.length,
@@ -56,7 +56,7 @@ class _ListPanelState extends State<ListPanel> {
               context: context,
               builder: (_) {
                 return AlertDialog(
-                  title: Text('Добавление пачки сигарет'),
+                  title: const Text('Добавление пачки сигарет'),
                   content: const Text(
                       'Дайте имя вашей пачке сиг типа Усманыч или типа пиписька'),
                   actions: [
@@ -72,7 +72,7 @@ class _ListPanelState extends State<ListPanel> {
                               .add({'pack': _packName});
                           Navigator.of(context).pop();
                         },
-                        child: Text('Добавить'))
+                        child: const Text('Добавить'))
                   ],
                 );
               });
