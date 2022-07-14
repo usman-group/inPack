@@ -53,10 +53,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          const Padding(padding: EdgeInsets.only(top: 20)),
-          ProfilePicture(profileNetworkImage: NetworkImage(_userImageUrl ?? defaultImage)),
-          const Padding(padding: EdgeInsets.only(top: 10)),
+          ProfilePicture(profilePictureUrl: _userImageUrl ?? defaultImage),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -73,6 +72,8 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(
                 Icons.mail_outline,

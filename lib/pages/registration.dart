@@ -1,6 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:in_pack/utils/show_error_dialog.dart';
+import 'package:in_pack/widgets/registration/email_field.dart';
+import 'package:in_pack/widgets/registration/password_field.dart';
+import 'package:in_pack/widgets/registration/register_btn.dart';
+import 'package:in_pack/widgets/registration/sign_in_btn.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -10,13 +14,17 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  String _email = '', _password = '';
+  final TextEditingController _emailController =
+      TextEditingController(text: 'example@example.example');
+  final TextEditingController _passwordController =
+      TextEditingController(text: 'password');
   late UserCredential userCredential;
 
   _signIn() async {
     try {
       userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: _email, password: _password)
+          .signInWithEmailAndPassword(
+              email: _emailController.text, password: _passwordController.text)
           .then((value) {
         setState(() {});
         return value;
@@ -53,7 +61,7 @@ class _RegisterPageState extends State<RegisterPage> {
               );
             });
       } else {
-        showErrorDialog(context, 'Пукпукпук $e');
+        showErrorDialog(context, 'Ошибка авторизации: $e');
       }
     } catch (e) {
       showErrorDialog(context, e);
@@ -63,7 +71,8 @@ class _RegisterPageState extends State<RegisterPage> {
   _register() async {
     try {
       userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: _email, password: _password);
+          .createUserWithEmailAndPassword(
+              email: _emailController.text, password: _passwordController.text);
       userCredential.user!.sendEmailVerification();
       showDialog(
           context: context,
@@ -131,68 +140,19 @@ class _RegisterPageState extends State<RegisterPage> {
             const Spacer(
               flex: 3,
             ),
-            TextField(
-              onChanged: (String text) => _email = text,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Email',
-                prefixIcon: Icon(
-                  Icons.email,
-                  color: Colors.white54,
-                ),
-                labelStyle: TextStyle(color: Colors.white54),
-                // fillColor: Colors.black38,
-                // filled: true,
-              ),
-              style: const TextStyle(color: Colors.white70),
+            EmailField(
+              emailController: _emailController,
             ),
             const Spacer(),
-            TextField(
-              obscureText: true,
-              onChanged: (String text) => _password = text,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Password',
-                prefixIcon: Icon(
-                  Icons.password,
-                  color: Colors.white54,
-                ),
-                labelStyle: TextStyle(color: Colors.white54),
-              ),
-              style: const TextStyle(color: Colors.white70),
+            PasswordField(
+              passwordController: _passwordController,
             ),
             const Spacer(
               flex: 3,
             ),
-            ElevatedButton(
-                onPressed: () async {
-                  _register();
-                },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50),
-                  child: Text(
-                    'Регистрация',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                )),
+            SignInButton(signInMethod: _signIn),
             const Spacer(),
-            ElevatedButton(
-                onPressed: () async {
-                  _signIn();
-                },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50),
-                  child: Text(
-                    'Войти',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                )),
+            RegisterButton(registerMethod: _register),
             const Spacer(
               flex: 4,
             ),

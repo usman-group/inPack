@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
-import '../utils/colors.dart' as colors;
+import 'package:in_pack/pages/list.dart';
+import 'package:in_pack/pages/rooms.dart';
+import 'package:in_pack/pages/user.dart';
 
 class BottomNavbar extends StatelessWidget {
   final void Function(int) onTap;
@@ -9,6 +10,11 @@ class BottomNavbar extends StatelessWidget {
   const BottomNavbar(
       {required this.onTap, required this.currentIndex, Key? key})
       : super(key: key);
+  static const bodyWidgets = [
+    RoomsPage(),
+    UserPanel(),
+    ListPanel(),
+  ];
 
   @override
   Widget build(BuildContext context) => BottomNavigationBar(
@@ -39,7 +45,11 @@ class BottomNavbar extends StatelessWidget {
         onTap: onTap,
         backgroundColor: Colors.white,
         unselectedItemColor: Colors.brown,
-        selectedItemColor: colors.darkBrown,
+        selectedItemColor: Colors.brown,
+        selectedIconTheme: const IconThemeData(opacity: 1),
+        unselectedIconTheme: const IconThemeData(
+          opacity: 0.7,
+        ),
         currentIndex: currentIndex,
       );
 }

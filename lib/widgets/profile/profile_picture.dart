@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
-
 class ProfilePicture extends StatelessWidget {
-  ProfilePicture({required this.profileNetworkImage, Key? key}) : super(key: key){
-    _imageNotifier = ValueNotifier<NetworkImage>(profileNetworkImage);
+  ProfilePicture({required this.profilePictureUrl, Key? key})
+      : super(key: key) {
+    _imageNotifier = ValueNotifier<NetworkImage>(NetworkImage(profilePictureUrl));
   }
-  final NetworkImage profileNetworkImage;
+
+  final String profilePictureUrl;
   late final ValueNotifier<NetworkImage> _imageNotifier;
 
   @override
@@ -20,5 +21,3 @@ class ProfilePicture extends StatelessWidget {
         });
   }
 }
-
-

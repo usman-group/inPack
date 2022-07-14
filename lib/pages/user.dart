@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:in_pack/pages/profile_page.dart';
-import 'package:in_pack/pages/registration_page.dart';
+import 'package:in_pack/pages/profile.dart';
+import 'package:in_pack/pages/registration.dart';
 
 class UserPanel extends StatefulWidget {
   const UserPanel({Key? key}) : super(key: key);
