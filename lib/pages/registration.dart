@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:in_pack/utils/show_error_dialog.dart';
 import 'package:in_pack/widgets/registration/email_field.dart';
 import 'package:in_pack/widgets/registration/password_field.dart';
 import 'package:in_pack/widgets/registration/register_btn.dart';
 import 'package:in_pack/widgets/registration/sign_in_btn.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -20,7 +22,7 @@ class _RegisterPageState extends State<RegisterPage> {
       TextEditingController(text: 'password');
   late UserCredential userCredential;
 
-  _signIn() async {
+  void _signIn() async {
     try {
       userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
@@ -68,12 +70,25 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  _register() async {
+  void _register() async {
     try {
       userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
               email: _emailController.text, password: _passwordController.text);
-      userCredential.user!.sendEmailVerification();
+      User user = userCredential.user!;
+
+      user.sendEmailVerification();
+
+      int now = DateTime.now().millisecondsSinceEpoch;
+      types.User firestoreUser = types.User(
+        id: user.uid,
+        createdAt: now,
+        updatedAt: now,
+        lastSeen: now,
+        role: types.Role.user,
+      );
+      FirebaseChatCore.instance.createUserInFirestore(firestoreUser);
+
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -82,7 +97,8 @@ class _RegisterPageState extends State<RegisterPage> {
               content: Text('Пользователь с email: '
                   '${userCredential.user!.email} успешно '
                   'зарегистрирован. На вашу почту направлено '
-                  'письмо для активации'),
+                  'письмо для активации. Теперь вы можете установить имя'
+                  'и фамилию в окне профиля'),
               actions: [
                 ElevatedButton(
                     onPressed: () {
@@ -125,10 +141,8 @@ class _RegisterPageState extends State<RegisterPage> {
             });
       }
     } catch (e) {
-      showErrorDialog(context, e);
+      showErrorDialog(context, 'Ошибка при регистрации $e');
     }
-    if (!mounted) return;
-    showErrorDialog(context, 'userCredential: $userCredential');
   }
 
   @override
