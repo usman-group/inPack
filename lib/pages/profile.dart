@@ -16,12 +16,12 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final User currentUser = FirebaseAuth.instance.currentUser!;
   late ValueNotifier<String> _userName;
-  late String? _userImageUrl;
+  late ValueNotifier<String> _userImageUrl;
 
   @override
   void initState() {
     _userName = ValueNotifier<String>(currentUser.displayName ?? 'Нет имени');
-    _userImageUrl = FirebaseAuth.instance.currentUser!.photoURL;
+    _userImageUrl = ValueNotifier<String>(currentUser.photoURL ?? defaultImage);
     super.initState();
   }
 
@@ -30,52 +30,68 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _avatarBuilderWithUrl(url: _userImageUrl ?? defaultImage),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ValueListenableBuilder<String?>(
-                valueListenable: _userName,
-                builder: (BuildContext context, String? value, Widget? child) {
-                  return Text(value.toString());
-                }),
-            IconButton(
-                onPressed: _showChangeNicknameDialog,
-                icon: const Icon(Icons.smoking_rooms_sharp))
-          ],
-        ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.mail_outline,
-              color: Colors.white,
-            ),
-            const Padding(padding: EdgeInsets.only(left: 10)),
-            Text(FirebaseAuth.instance.currentUser!.email!),
-          ],
-        ),
-        CupertinoButton(
-          onPressed: () async {
-            FirebaseAuth.instance.signOut();
-          },
-          color: Colors.white,
-          child: const Text(
-            'Выйти нахуй',
-            style: TextStyle(color: Colors.black),
-          ),
-        )
+        _avatarBuilderWithUrl(),
+        _nicknameBuilder(),
+        _emailBuilder(),
+        _signOutBuilder(),
       ],
     );
   }
 
-  Widget _avatarBuilderWithUrl({required String? url}) {
+  Widget _signOutBuilder() {
+    return CupertinoButton(
+      onPressed: () async {
+        FirebaseAuth.instance.signOut();
+      },
+      color: Colors.white,
+      child: const Text(
+        'Выйти нахуй',
+        style: TextStyle(color: Colors.black),
+      ),
+    );
+  }
+
+  Widget _emailBuilder() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(
+          Icons.mail_outline,
+          color: Colors.white,
+        ),
+        const Padding(padding: EdgeInsets.only(left: 10)),
+        Text(FirebaseAuth.instance.currentUser!.email!),
+      ],
+    );
+  }
+
+  Widget _nicknameBuilder() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        ValueListenableBuilder<String>(
+            valueListenable: _userName,
+            builder: (BuildContext context, String value, Widget? child) {
+              return Text(value);
+            }),
+        IconButton(
+            onPressed: _showChangeNicknameDialog,
+            icon: const Icon(Icons.smoking_rooms_sharp))
+      ],
+    );
+  }
+
+  Widget _avatarBuilderWithUrl() {
     return Stack(children: <Widget>[
-      CircleAvatar(
-        backgroundImage: NetworkImage(url ?? defaultImage),
-        radius: 40,
+      ValueListenableBuilder<String>(
+        valueListenable: _userImageUrl,
+        builder: (BuildContext context, String value, Widget? child) =>
+            CircleAvatar(
+          backgroundImage: NetworkImage(value),
+          radius: 40,
+        ),
       ),
       Positioned(
         bottom: -10,
@@ -117,14 +133,19 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: const Text('Отмена')),
                     ElevatedButton(
                         onPressed: () async {
+                          // TODO: Check that url is valid
                           if (newUrl != '') {
+                            _userImageUrl.value = newUrl;
                             Navigator.of(context).pop();
                             await FirebaseFirestore.instance
                                 .collection('users')
                                 .doc(user.uid)
                                 .set({'imageUrl': newUrl});
                             await user.updatePhotoURL(newUrl);
-                          } else {}
+                          } else {
+                            // TODO: Show incorrect image dialog
+                            print('Incorrect Url');
+                          }
                         },
                         child: const Text('Изменить')),
                   ],
@@ -133,28 +154,35 @@ class _ProfilePageState extends State<ProfilePage> {
             ));
   }
 
-  void _showChangeNicknameDialog() {
-    showDialog(
+  Future _showChangeNicknameDialog() {
+    String userName = '';
+    return showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Изменить ник'),
         content: const Text('Введите новый ник и нажмите Усман'),
         actions: [
           TextField(
-            onChanged: (text) => _userName.value = text,
+            onChanged: (text) => userName = text,
           ),
           TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Отмена')),
           TextButton(
-              onPressed: () async {
-                await FirebaseAuth.instance.currentUser!
-                    .updateDisplayName(_userName.value)
-                    .then((value) => Navigator.of(context).pop());
-                FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .update({'firstName': _userName.value});
+              onPressed: () {
+                if (userName != '' && userName.length < 20) {
+                  _userName.value = userName;
+                  FirebaseAuth.instance.currentUser!
+                      .updateDisplayName(_userName.value)
+                      .then((value) => Navigator.of(context).pop());
+                  FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .update({'firstName': _userName.value});
+                } else {
+                  // TODO: Show incorrect nickname dialog
+                  print('Incorrect Nickname');
+                }
               },
               child: const Text('Усман')),
         ],

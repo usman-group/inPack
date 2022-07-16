@@ -1,11 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:in_pack/pages/chat.dart';
-import 'package:in_pack/pages/list.dart';
 import 'package:in_pack/pages/registration.dart';
-import 'package:in_pack/pages/rooms.dart';
-import 'package:in_pack/pages/user.dart';
 import 'package:in_pack/widgets/home/bottom_navbar.dart';
 
 class Home extends StatefulWidget {

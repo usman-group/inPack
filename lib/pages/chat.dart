@@ -29,76 +29,73 @@ class _ChatPageState extends State<ChatPage> {
   bool _isAttachmentUploading = false;
 
   @override
-  Widget build(BuildContext context) =>
-      Scaffold(
+  Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           systemOverlayStyle: SystemUiOverlayStyle.light,
-          title: const Text('Chat'),
+          title: const Text('Перестрелка'),
+          backgroundColor: Color.fromARGB(210, 2, 2, 33),
         ),
         body: StreamBuilder<types.Room>(
           initialData: widget.room,
           stream: FirebaseChatCore.instance.room(widget.room.id),
-          builder: (context, snapshot) =>
-              StreamBuilder<List<types.Message>>(
-                initialData: const [],
-                stream: FirebaseChatCore.instance.messages(snapshot.data!),
-                builder: (context, snapshot) =>
-                    Chat(
-                      isAttachmentUploading: _isAttachmentUploading,
-                      messages: snapshot.data ?? [],
-                      onAttachmentPressed: _handleAttachmentPressed,
-                      onMessageTap: _handleMessageTap,
-                      onPreviewDataFetched: _handlePreviewDataFetched,
-                      onSendPressed: _handleSendPressed,
-                      user: types.User(
-                        id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
-                      ),
-                    ),
+          builder: (context, snapshot) => StreamBuilder<List<types.Message>>(
+            initialData: const [],
+            stream: FirebaseChatCore.instance.messages(snapshot.data!),
+            builder: (context, snapshot) => Chat(
+              isAttachmentUploading: _isAttachmentUploading,
+              messages: snapshot.data ?? [],
+              onAttachmentPressed: _handleAttachmentPressed,
+              onMessageTap: _handleMessageTap,
+              onPreviewDataFetched: _handlePreviewDataFetched,
+              onSendPressed: _handleSendPressed,
+              user: types.User(
+                id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
               ),
+            ),
+          ),
         ),
       );
 
   void _handleAttachmentPressed() {
     showModalBottomSheet<void>(
       context: context,
-      builder: (BuildContext context) =>
-          SafeArea(
-            child: SizedBox(
-              height: 144,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _handleImageSelection();
-                    },
-                    child: const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('Photo'),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _handleFileSelection();
-                    },
-                    child: const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('File'),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('Cancel'),
-                    ),
-                  ),
-                ],
+      builder: (BuildContext context) => SafeArea(
+        child: SizedBox(
+          height: 144,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _handleImageSelection();
+                },
+                child: const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('Photo'),
+                ),
               ),
-            ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _handleFileSelection();
+                },
+                child: const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('File'),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('Cancel'),
+                ),
+              ),
+            ],
           ),
+        ),
+      ),
     );
   }
 
@@ -207,8 +204,10 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  void _handlePreviewDataFetched(types.TextMessage message,
-      types.PreviewData previewData,) {
+  void _handlePreviewDataFetched(
+    types.TextMessage message,
+    types.PreviewData previewData,
+  ) {
     final updatedMessage = message.copyWith(previewData: previewData);
 
     FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);

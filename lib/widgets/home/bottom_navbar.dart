@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:in_pack/pages/list.dart';
 import 'package:in_pack/pages/rooms.dart';
-import 'package:in_pack/pages/user.dart';
+import 'package:in_pack/pages/profile.dart';
 
 class BottomNavbar extends StatelessWidget {
   final void Function(int) onTap;
@@ -12,7 +12,7 @@ class BottomNavbar extends StatelessWidget {
       : super(key: key);
   static const bodyWidgets = [
     RoomsPage(),
-    UserPanel(),
+    ProfilePage(),
     ListPanel(),
   ];
 
@@ -24,7 +24,7 @@ class BottomNavbar extends StatelessWidget {
                 Icons.chat_outlined,
                 color: Colors.brown,
               ),
-              label: 'Chat',
+              label: 'Чат',
               backgroundColor: Colors.white),
           BottomNavigationBarItem(
             icon: Icon(
@@ -32,7 +32,7 @@ class BottomNavbar extends StatelessWidget {
               color: Colors.brown,
             ),
             backgroundColor: Colors.green,
-            label: 'User',
+            label: 'Профиль',
           ),
           BottomNavigationBarItem(
               icon: Icon(
@@ -40,7 +40,7 @@ class BottomNavbar extends StatelessWidget {
                 color: Colors.brown,
               ),
               backgroundColor: Colors.blue,
-              label: 'Packs'),
+              label: 'Пачки'),
         ],
         onTap: onTap,
         backgroundColor: Colors.white,
