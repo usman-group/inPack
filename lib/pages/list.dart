@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class ListPanel extends StatefulWidget {
-  const ListPanel({Key? key}) : super(key: key);
+class ListPage extends StatefulWidget {
+  const ListPage({Key? key}) : super(key: key);
 
   @override
-  State<ListPanel> createState() => _ListPanelState();
+  State<ListPage> createState() => _ListPageState();
 }
 
-class _ListPanelState extends State<ListPanel> {
+class _ListPageState extends State<ListPage> {
   String _packName = '';
 
   @override

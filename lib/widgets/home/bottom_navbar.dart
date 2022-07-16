@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:in_pack/pages/list.dart';
+import 'package:in_pack/pages/map.dart';
 import 'package:in_pack/pages/rooms.dart';
 import 'package:in_pack/pages/profile.dart';
 
@@ -13,7 +14,8 @@ class BottomNavbar extends StatelessWidget {
   static const bodyWidgets = [
     RoomsPage(),
     ProfilePage(),
-    ListPanel(),
+    ListPage(),
+    MapPage(),
   ];
 
   @override
@@ -41,6 +43,13 @@ class BottomNavbar extends StatelessWidget {
               ),
               backgroundColor: Colors.blue,
               label: 'Пачки'),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.list,
+                color: Colors.brown,
+              ),
+              backgroundColor: Colors.red,
+              label: 'Карта'),
         ],
         onTap: onTap,
         backgroundColor: Colors.white,
