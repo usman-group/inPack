@@ -52,7 +52,7 @@ class _RoomsPageState extends State<RoomsPage> {
                   thickness: 3,
                   indent: 10,
                   endIndent: 10,
-                  color: Colors.black,
+                  color: Colors.black26,
                 );
               },
             ),
