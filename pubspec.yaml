@@ -48,6 +48,7 @@ dependencies:
   faker:
   mime:
   http:
+  google_maps_flutter:
 
 dev_dependencies:
   flutter_test:
