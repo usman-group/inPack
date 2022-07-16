@@ -14,16 +14,16 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final User currentUser = FirebaseAuth.instance.currentUser!;
-  late ValueNotifier<String> _userName;
-  late ValueNotifier<String> _userImageUrl;
-
   @override
   void initState() {
     _userName = ValueNotifier<String>(currentUser.displayName ?? 'Нет имени');
     _userImageUrl = ValueNotifier<String>(currentUser.photoURL ?? defaultImage);
     super.initState();
   }
+
+  final User currentUser = FirebaseAuth.instance.currentUser!;
+  late ValueNotifier<String> _userName;
+  late ValueNotifier<String> _userImageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -67,19 +67,47 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _nicknameBuilder() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        ValueListenableBuilder<String>(
-            valueListenable: _userName,
-            builder: (BuildContext context, String value, Widget? child) {
-              return Text(value);
-            }),
-        IconButton(
-            onPressed: _showChangeNicknameDialog,
-            icon: const Icon(Icons.smoking_rooms_sharp))
-      ],
+    return Container(
+      height: 70,
+      width: 300,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.white38,
+      ),
+      child: Stack(fit: StackFit.expand, children: [
+        Center(
+          child: ValueListenableBuilder<String>(
+              valueListenable: _userName,
+              builder: (BuildContext context, String value, Widget? child) {
+                return Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 20,
+                  ),
+                );
+              }),
+        ),
+        Positioned(
+          bottom: -4,
+          right: 0,
+          child: CircleAvatar(
+            radius: 20,
+            backgroundColor: Colors.brown,
+            child: CircleAvatar(
+              radius: 15,
+              backgroundColor: Colors.white,
+              child: IconButton(
+                onPressed: _showChangeNicknameDialog,
+                icon: Icon(
+                  Icons.edit,
+                  color: Colors.black,
+                  size: 16,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ]),
     );
   }
 
