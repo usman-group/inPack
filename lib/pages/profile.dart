@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,11 +30,22 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _avatarBuilderWithUrl(),
-        _nicknameBuilder(),
-        _emailBuilder(),
+        Container(
+          height: 300,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30), color: Colors.black12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _avatarBuilderWithUrl(),
+              _nicknameBuilder(),
+              _emailBuilder(),
+            ],
+          ),
+        ),
         _signOutBuilder(),
       ],
     );
@@ -61,7 +74,10 @@ class _ProfilePageState extends State<ProfilePage> {
           color: Colors.white,
         ),
         const Padding(padding: EdgeInsets.only(left: 10)),
-        Text(FirebaseAuth.instance.currentUser!.email!),
+        Text(
+          currentUser.email!,
+          style: const TextStyle(color: Colors.white),
+        ),
       ],
     );
   }
@@ -127,7 +143,7 @@ class _ProfilePageState extends State<ProfilePage> {
         right: 0,
         child: CircleAvatar(
           radius: 15,
-          backgroundColor: Colors.brown[600],
+          backgroundColor: Colors.brown[900],
           child: IconButton(
             onPressed: () {
               _showUpdateImageDialog();

@@ -28,10 +28,15 @@ class _RoomsPageState extends State<RoomsPage> {
                   Text('Ошибочка вышла какая-то ${snapshot.error.toString()}'),
             );
           } else if (!snapshot.hasData) {
-            return Container(
-              alignment: Alignment.center,
-              child: const Text('Нет пользователей'),
-            );
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Center(
+                  child: CircularProgressIndicator(color: Colors.white));
+            } else {
+              return Container(
+                alignment: Alignment.center,
+                child: const Text('Нет пользователей'),
+              );
+            }
           }
           return Container(
             padding: const EdgeInsets.all(10),
