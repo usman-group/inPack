@@ -1,7 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:in_pack/widgets/profile/profile_picture.dart';
 
 const String defaultImage =
     'https://sun9-47.userapi.com/c10668/u118752696/a_be977d28.jpg';
@@ -30,7 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        ProfilePicture(profilePictureUrl: _userImageUrl ?? defaultImage),
+        _avatarBuilderWithUrl(url: _userImageUrl ?? defaultImage),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -41,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   return Text(value.toString());
                 }),
             IconButton(
-                onPressed: _changeNicknameDialog,
+                onPressed: _showChangeNicknameDialog,
                 icon: const Icon(Icons.smoking_rooms_sharp))
           ],
         ),
@@ -62,13 +62,78 @@ class _ProfilePageState extends State<ProfilePage> {
             FirebaseAuth.instance.signOut();
           },
           color: Colors.white,
-          child: const Text('Выйти нахуй'),
+          child: const Text(
+            'Выйти нахуй',
+            style: TextStyle(color: Colors.black),
+          ),
         )
       ],
     );
   }
 
-  void _changeNicknameDialog() {
+  Widget _avatarBuilderWithUrl({required String? url}) {
+    return Stack(children: <Widget>[
+      CircleAvatar(
+        backgroundImage: NetworkImage(url ?? defaultImage),
+        radius: 40,
+      ),
+      Positioned(
+        bottom: -10,
+        right: -10,
+        child: IconButton(
+          onPressed: () {
+            _showUpdateImageDialog();
+            setState(() {});
+          },
+          icon: const Icon(CupertinoIcons.add_circled_solid),
+          color: Colors.white,
+        ),
+      )
+    ]);
+  }
+
+  Future _showUpdateImageDialog() {
+    String newUrl = '';
+    final User user = FirebaseAuth.instance.currentUser!;
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text('Изменение авы'),
+              content: const Text('Введите url картинки'),
+              actions: [
+                TextField(
+                  autofocus: true,
+                  onChanged: (text) {
+                    newUrl = text;
+                  },
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Отмена')),
+                    ElevatedButton(
+                        onPressed: () async {
+                          if (newUrl != '') {
+                            Navigator.of(context).pop();
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(user.uid)
+                                .set({'imageUrl': newUrl});
+                            await user.updatePhotoURL(newUrl);
+                          } else {}
+                        },
+                        child: const Text('Изменить')),
+                  ],
+                ),
+              ],
+            ));
+  }
+
+  void _showChangeNicknameDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -86,6 +151,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 await FirebaseAuth.instance.currentUser!
                     .updateDisplayName(_userName.value)
                     .then((value) => Navigator.of(context).pop());
+                FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .update({'firstName': _userName.value});
               },
               child: const Text('Усман')),
         ],
