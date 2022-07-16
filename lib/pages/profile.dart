@@ -82,8 +82,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 return Text(
                   value,
                   style: const TextStyle(
-                    fontSize: 20,
-                  ),
+                      fontSize: 18,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
                 );
               }),
         ),
@@ -122,15 +123,22 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
       Positioned(
-        bottom: -10,
-        right: -10,
-        child: IconButton(
-          onPressed: () {
-            _showUpdateImageDialog();
-            setState(() {});
-          },
-          icon: const Icon(CupertinoIcons.add_circled_solid),
-          color: Colors.white,
+        bottom: 0,
+        right: 0,
+        child: CircleAvatar(
+          radius: 15,
+          backgroundColor: Colors.brown[600],
+          child: IconButton(
+            onPressed: () {
+              _showUpdateImageDialog();
+              setState(() {});
+            },
+            icon: const Icon(
+              Icons.add_a_photo,
+              size: 15,
+            ),
+            color: Colors.white,
+          ),
         ),
       )
     ]);
