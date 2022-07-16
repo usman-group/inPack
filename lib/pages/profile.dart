@@ -29,25 +29,32 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          height: 300,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30), color: Colors.black12),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _avatarBuilderWithUrl(),
-              _nicknameBuilder(),
-              _emailBuilder(),
-            ],
-          ),
+    return SingleChildScrollView(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height - 138,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              height: 300,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(80),
+                  color: Colors.black12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _avatarBuilderWithUrl(),
+                  _nicknameBuilder(),
+                  _emailBuilder(),
+                ],
+              ),
+            ),
+            _signOutBuilder(),
+          ],
         ),
-        _signOutBuilder(),
-      ],
+      ),
     );
   }
 
@@ -115,7 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
               backgroundColor: Colors.white,
               child: IconButton(
                 onPressed: _showChangeNicknameDialog,
-                icon: Icon(
+                icon: const Icon(
                   Icons.edit,
                   color: Colors.black,
                   size: 16,
@@ -216,27 +223,33 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           TextField(
             onChanged: (text) => userName = text,
+            autofocus: true,
           ),
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Отмена')),
-          TextButton(
-              onPressed: () {
-                if (userName != '' && userName.length < 20) {
-                  _userName.value = userName;
-                  FirebaseAuth.instance.currentUser!
-                      .updateDisplayName(_userName.value)
-                      .then((value) => Navigator.of(context).pop());
-                  FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(FirebaseAuth.instance.currentUser!.uid)
-                      .update({'firstName': _userName.value});
-                } else {
-                  // TODO: Show incorrect nickname dialog
-                  print('Incorrect Nickname');
-                }
-              },
-              child: const Text('Усман')),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Отмена')),
+              TextButton(
+                  onPressed: () {
+                    if (userName != '' && userName.length < 20) {
+                      _userName.value = userName;
+                      Navigator.of(context).pop();
+                      FirebaseAuth.instance.currentUser!
+                          .updateDisplayName(_userName.value);
+                      FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .update({'firstName': _userName.value});
+                    } else {
+                      // TODO: Show incorrect nickname dialog
+                      print('Incorrect Nickname');
+                    }
+                  },
+                  child: const Text('Усман')),
+            ],
+          ),
         ],
       ),
     );
