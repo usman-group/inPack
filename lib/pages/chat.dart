@@ -33,7 +33,7 @@ class _ChatPageState extends State<ChatPage> {
         appBar: AppBar(
           systemOverlayStyle: SystemUiOverlayStyle.light,
           title: const Text('Перестрелка'),
-          backgroundColor: Color.fromARGB(210, 2, 2, 33),
+          backgroundColor: const Color.fromARGB(210, 2, 2, 33),
         ),
         body: StreamBuilder<types.Room>(
           initialData: widget.room,
