@@ -27,32 +27,32 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height - 138,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              height: 300,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(80),
-                  color: Colors.black12),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _avatarBuilderWithUrl(),
-                  _nicknameBuilder(),
-                  _emailBuilder(),
-                ],
-              ),
-            ),
-            _signOutBuilder(),
-          ],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Card(
+          // shape:
+          //     RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          margin: const EdgeInsets.symmetric(
+            horizontal: 20,
+          ),
+          color: Colors.brown[500],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              const Padding(padding: EdgeInsets.only(bottom: 20)),
+              _avatarBuilderWithUrl(),
+              const Padding(padding: EdgeInsets.only(bottom: 20)),
+              _nicknameBuilder(),
+              const Padding(padding: EdgeInsets.only(bottom: 20)),
+              _emailBuilder(),
+              const Padding(padding: EdgeInsets.only(bottom: 20)),
+            ],
+          ),
         ),
-      ),
+        _signOutBuilder(),
+      ],
     );
   }
 
@@ -148,7 +148,7 @@ class _ProfilePageState extends State<ProfilePage> {
         right: 0,
         child: CircleAvatar(
           radius: 15,
-          backgroundColor: Colors.brown[900],
+          backgroundColor: Colors.brown[500],
           child: IconButton(
             onPressed: () {
               _showUpdateImageDialog();
