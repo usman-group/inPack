@@ -49,7 +49,8 @@ dependencies:
   mime:
   http:
   flutter_map: ^2.0.0
-
+  latlong2: 
+  flutter_map_marker_cluster:
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -91,6 +92,9 @@ flutter:
      - family: Gantari
        fonts:
          - asset: fonts/Gantari-VariableFont_wght.ttf
+     - family: SF
+       fonts:
+         - asset: fonts/SF-Pro.ttf
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

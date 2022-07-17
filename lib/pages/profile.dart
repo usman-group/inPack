@@ -59,10 +59,10 @@ class _ProfilePageState extends State<ProfilePage> {
       onPressed: () async {
         FirebaseAuth.instance.signOut();
       },
-      color: Colors.white,
+      color: Colors.white54,
       child: const Text(
-        'Выйти нахуй',
-        style: TextStyle(color: Colors.black),
+        'Выйти нахуй из аккаунта',
+        style: TextStyle(color: Colors.black, fontFamily: 'SF'),
       ),
     );
   }
@@ -79,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
         const Padding(padding: EdgeInsets.only(left: 10)),
         Text(
           currentUser.email!,
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white, fontFamily: 'SF'),
         ),
       ],
     );
@@ -103,7 +103,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   style: const TextStyle(
                       fontSize: 18,
                       color: Colors.black,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'SF'),
                 );
               }),
         ),
@@ -163,6 +164,7 @@ class _ProfilePageState extends State<ProfilePage> {
     ]);
   }
 
+  // TODO: UI
   Future _showUpdateImageDialog() {
     String newUrl = '';
     final User user = FirebaseAuth.instance.currentUser!;
@@ -209,6 +211,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ));
   }
 
+  // TODO: UI
   Future _showChangeNicknameDialog() {
     String userName = '';
     return showDialog(
