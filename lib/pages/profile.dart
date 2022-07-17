@@ -32,8 +32,6 @@ class _ProfilePageState extends State<ProfilePage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Card(
-          // shape:
-          //     RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           margin: const EdgeInsets.symmetric(
             horizontal: 20,
           ),
@@ -149,16 +147,16 @@ class _ProfilePageState extends State<ProfilePage> {
         child: CircleAvatar(
           radius: 15,
           backgroundColor: Colors.brown[500],
-          child: IconButton(
-            onPressed: () {
-              _showUpdateImageDialog();
-              setState(() {});
-            },
-            icon: const Icon(
-              Icons.add_a_photo,
-              size: 15,
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            child: IconButton(
+              onPressed: () => _showUpdateImageDialog(),
+              icon: const Icon(
+                Icons.add_a_photo,
+                size: 15,
+              ),
+              color: Colors.black,
             ),
-            color: Colors.white,
           ),
         ),
       )

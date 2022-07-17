@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:in_pack/pages/list.dart';
 import 'package:in_pack/pages/map.dart';
@@ -20,41 +21,41 @@ class BottomNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.chat_outlined,
-                color: Colors.brown,
+                color: Colors.white,
               ),
               label: 'Чат',
-              backgroundColor: Colors.white),
+              backgroundColor: Colors.brown[800]),
           BottomNavigationBarItem(
-            icon: Icon(
+            icon: const Icon(
               Icons.person,
-              color: Colors.brown,
+              color: Colors.white,
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.brown[500],
             label: 'Профиль',
           ),
           BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.list,
-                color: Colors.brown,
+                color: Colors.white,
               ),
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.brown[800],
               label: 'Пачки'),
           BottomNavigationBarItem(
-              icon: Icon(
-                Icons.list,
-                color: Colors.brown,
+              icon: const Icon(
+                CupertinoIcons.map_pin_ellipse,
+                color: Colors.white,
               ),
-              backgroundColor: Colors.red,
+              backgroundColor: Colors.brown[500],
               label: 'Карта'),
         ],
         onTap: onTap,
         backgroundColor: Colors.white,
-        unselectedItemColor: Colors.brown,
-        selectedItemColor: Colors.brown,
+        unselectedItemColor: Colors.white,
+        selectedItemColor: Colors.white,
         selectedIconTheme: const IconThemeData(opacity: 1),
         unselectedIconTheme: const IconThemeData(
           opacity: 0.7,
