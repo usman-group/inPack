@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 const String defaultImage =
     'https://sun9-47.userapi.com/c10668/u118752696/a_be977d28.jpg';
 
+/// Widget of profile page with edit capabilites
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
@@ -96,17 +97,18 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Stack(fit: StackFit.expand, children: [
         Center(
           child: ValueListenableBuilder<String>(
-              valueListenable: _userName,
-              builder: (BuildContext context, String value, Widget? child) {
-                return Text(
-                  value,
-                  style: const TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'SF'),
-                );
-              }),
+            valueListenable: _userName,
+            builder: (BuildContext context, String value, Widget? child) {
+              return Text(
+                value,
+                style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'SF'),
+              );
+            },
+          ),
         ),
         Positioned(
           bottom: -4,

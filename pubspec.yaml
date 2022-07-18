@@ -48,10 +48,11 @@ dependencies:
   faker:
   mime:
   http:
-  flutter_map: any
-  flutter_map_marker_cluster: any
+  flutter_map_marker_cluster: ^0.5.0
+  flutter_map:
+    # git:
+    #   url: https://github.com/usman-group/flutter_map-1.1.1
   latlong2: 
-  # flutter_map_marker_cluster: ^0.5.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
