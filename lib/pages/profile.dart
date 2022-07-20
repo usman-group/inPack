@@ -92,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
       width: 300,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Colors.white38,
+        color: Colors.brown[800],
       ),
       child: Stack(fit: StackFit.expand, children: [
         Center(
@@ -103,9 +103,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 value,
                 style: const TextStyle(
                     fontSize: 18,
-                    color: Colors.black,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'SF'),
+                    fontFamily: 'Consolas'),
               );
             },
           ),

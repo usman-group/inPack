@@ -41,21 +41,13 @@ class _RoomsPageState extends State<RoomsPage> {
           return Container(
             padding: const EdgeInsets.all(10),
             child: ListView.separated(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (BuildContext context, int idx) {
-                types.User user = snapshot.data![idx];
-                return _userBuilder(user: user);
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return const Divider(
-                  height: 10,
-                  thickness: 3,
-                  indent: 10,
-                  endIndent: 10,
-                  color: Colors.black26,
-                );
-              },
-            ),
+                itemCount: snapshot.data!.length,
+                itemBuilder: (BuildContext context, int idx) {
+                  types.User user = snapshot.data![idx];
+                  return _userBuilder(user: user);
+                },
+                separatorBuilder: (BuildContext context, int index) =>
+                    const Padding(padding: EdgeInsets.only(bottom: 7))),
           );
         }));
   }
@@ -67,15 +59,23 @@ class _RoomsPageState extends State<RoomsPage> {
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: Colors.white10,
+          color: Colors.brown[800],
         ),
         child: Row(
           children: <Widget>[
             CircleAvatar(
               backgroundImage: NetworkImage(user.imageUrl ?? defaultImage),
+              radius: 27,
             ),
             const Padding(padding: EdgeInsets.only(right: 10)),
-            Text(user.firstName ?? 'NoName'),
+            Text(
+              user.firstName ?? 'NoName',
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontFamily: 'Consolas',
+                  fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ),

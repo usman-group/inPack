@@ -59,13 +59,9 @@ class _MapPageState extends State<MapPage> {
           rotation: 0,
           interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate,
           enableScrollWheel: true,
-          // scrollWheelVelocity: 0.005, // for newer version
           onTap: (tapPosition, LatLng latLng) {
             // TODO: create onTap
             _popupController.hideAllPopups();
-            print(
-                'tapPosition: ${tapPosition.global}, ${tapPosition.relative}');
-            print('latLng: $latLng');
           }),
       layers: [
         TileLayerOptions(
@@ -79,7 +75,7 @@ class _MapPageState extends State<MapPage> {
         MarkerClusterLayerOptions(
           maxClusterRadius: 190,
           disableClusteringAtZoom: 16,
-          size: Size(50, 50),
+          size: const Size(50, 50),
           fitBoundsOptions: const FitBoundsOptions(
             padding: EdgeInsets.all(50),
           ),
@@ -116,7 +112,7 @@ class _MapPageState extends State<MapPage> {
           const BoxDecoration(color: Colors.black, shape: BoxShape.rectangle),
       child: Text(
         marker.point.toString(),
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
       ),
     );
   }
