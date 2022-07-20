@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 
 abstract class MarkerWithPopup extends Marker {
   MarkerWithPopup(
@@ -71,9 +73,14 @@ class SmokeRoomMarker extends MarkerWithPopup {
 }
 
 class UserMarker extends MarkerWithPopup {
-  UserMarker({required super.point, required this.user})
-      : super(builder: markerBuilder);
+  UserMarker({required this.position, required this.user})
+      : super(
+            builder: markerBuilder,
+            point: LatLng(position.latitude, position.longitude));
   final types.User user;
+  final Position position;
+
+  LatLng get userPoint => LatLng(position.latitude, position.longitude);
 
   static Widget markerBuilder(BuildContext context) {
     return const Icon(
@@ -82,12 +89,32 @@ class UserMarker extends MarkerWithPopup {
   }
 
   @override
-  // TODO: implement categoryName
   String get categoryName => 'Усманчик';
 
   @override
   Widget popupBuilder() {
-    // TODO: implement popupBuilder
-    throw UnimplementedError();
+    return SizedBox(
+      height: 250,
+      child: Card(
+        color: Colors.white,
+        child: Column(
+          children: [
+            Text(categoryName),
+            Text(
+              categoryName,
+              style: const TextStyle(
+                  fontSize: 20, fontFamily: 'SF', fontWeight: FontWeight.bold),
+            ),
+            Image.network(
+              user.imageUrl ??
+                  'https://sun9-77.userapi.com/impf/EQmeC3URKZRfeCdM_pnB7LzrZpuBEzTwWeiVdQ/78O9We5g3rg.jpg?size=1242x1176&quality=96&sign=9e78c700d9449ee925b86d5da2cb527a&type=album',
+              height: 180,
+            ),
+            Text(user.firstName ??
+                'Нет описания, но вы можете его добавить ;);))%;(№), только пока нельзя соре'),
+          ],
+        ),
+      ),
+    );
   }
 }

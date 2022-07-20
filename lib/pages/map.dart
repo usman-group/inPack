@@ -1,11 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:in_pack/markers/markers.dart';
 import 'package:in_pack/utils/show_dialog.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -16,105 +20,34 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   final MapController _mapController = MapController();
-
   final PopupController _popupController = PopupController();
+  static final mainSmokeRoomLatLng = LatLng(55.6699, 37.4803);
+  LatLng? currentUserLatLng;
+  Position? currentUserPosition;
+  UserMarker? currentUserMarker;
 
-  // TODO: make cloud markers for user and smoke rooms
-  final LatLng mainSmokeRoomCoordinates = LatLng(55.66965, 37.47935);
-  late final List<Marker> _markers;
-  final LatLngBounds mainSmokeRoomBounds =
-      LatLngBounds(LatLng(55.67102, 37.47649), LatLng(55.66853, 37.48386));
-  final List<LatLng> _latLngList = [
-    LatLng(55.669649, 37.478643),
-    LatLng(55.670194, 37.477297),
-  ];
-
-  void locationRequest() async {
-    void sweetWarningAboutPermanentlyDenied() => showInfoDialog(context,
-            title: 'Ебать ты пидорас',
-            content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const <Widget>[
-                  Text('Извините, но Вам придётся покончить с собой, так как '
-                      'вы запретили доступ к геолокации'),
-                  Text('Либо зайти в настройки и там включить геолокацию',
-                      style: TextStyle(fontSize: 8)),
-                ]),
-            actions: [
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Отмена')),
-              CupertinoButton.filled(
-                  child: Text('В настройки'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    openAppSettings();
-                  })
-            ]);
-
-    var locationStatus = await Permission.location.status;
-    if (locationStatus.isPermanentlyDenied) {
-      sweetWarningAboutPermanentlyDenied();
-    } else if (locationStatus.isDenied) {
-      Permission.location.request().then((value) {
-        if (value.isPermanentlyDenied) {
-          sweetWarningAboutPermanentlyDenied();
-        } else if (value.isGranted) {
-          showInfoDialog(context,
-              title: 'Поздравляю',
-              content: const Text('Теперь Вам доступен сервис стреляния'
-                  ' в голову Вашей тупой мамаши'));
-        } else if (value.isLimited) {
-          showInfoDialog(context,
-              title: 'Ну почти нормально', content: const Text('спасибо'));
-        }
-      });
-    } else if (locationStatus.isGranted) {
-      if (!mounted) return;
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Поздравляю'),
-              content: Text('У Вас есть доступ к геолокации'),
-              actions: [
-                CupertinoButton(
-                    child: Text('писька'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    }),
-              ],
-            );
-          });
-      // showInfoDialog(context,
-      //     title: 'Поздравляю', content: Text('У вас есть доступ к геолокации'));
-    }
+  Future<void> _initLocation() async {
+    currentUserPosition = await _getCurrentUserPosition();
+    currentUserLatLng = _positionToLatLng(currentUserPosition);
+    currentUserMarker = await _getCurrentUserMarker();
   }
 
   @override
   void initState() {
-    _markers = _latLngList
-        .map((point) => SmokeRoomMarker(
-            point: point,
-            name: 'МИРЭА',
-            description: 'хайповая курилочка у входа в МИРЭА'))
-        .toList();
-    locationRequest();
+    _initLocation();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    _initLocation();
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
           plugins: <MapPlugin>[
             MarkerClusterPlugin(),
           ],
-          center: mainSmokeRoomCoordinates,
+          center: currentUserLatLng ?? mainSmokeRoomLatLng,
 
           /// Initial center if not specified bounds
           zoom: 18.5,
@@ -122,8 +55,10 @@ class _MapPageState extends State<MapPage> {
           /// Initial zoom if not specified bounds
           maxZoom: 19,
           minZoom: 1,
-          bounds: mainSmokeRoomBounds,
-          // Initial map bounds
+
+          /// [bounds] is Initial map bounds
+          // bounds: currentPositionLatLng,
+
           maxBounds: LatLngBounds(
             // Max map bounds
             LatLng(-90, -180.0),
@@ -132,11 +67,10 @@ class _MapPageState extends State<MapPage> {
           rotation: 0,
           interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate,
           enableScrollWheel: true,
-          onTap: (tapPosition, LatLng latLng) {
-            // TODO: create onTap
-            _popupController.hideAllPopups();
-          }),
+          onTap: (tapPosition, LatLng latLng) =>
+              _popupController.hideAllPopups()),
       layers: [
+        // Main layer of map
         TileLayerOptions(
           minZoom: 1,
           maxZoom: 19,
@@ -144,6 +78,7 @@ class _MapPageState extends State<MapPage> {
           urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           subdomains: ['a', 'b', 'c'],
         ),
+        // Layer of cluster markers with popups
         MarkerClusterLayerOptions(
           maxClusterRadius: 190,
           disableClusteringAtZoom: 16,
@@ -151,7 +86,9 @@ class _MapPageState extends State<MapPage> {
           fitBoundsOptions: const FitBoundsOptions(
             padding: EdgeInsets.all(50),
           ),
-          markers: _markers,
+          markers: currentUserMarker != null
+              ? <Marker>[currentUserMarker!]
+              : const [],
           polygonOptions: const PolygonOptions(
               borderColor: Colors.blueAccent,
               color: Colors.black12,
@@ -175,6 +112,14 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
+  LatLng? _positionToLatLng(Position? position) {
+    if (position == null) {
+      return null;
+    } else {
+      return LatLng(position.latitude, position.longitude);
+    }
+  }
+
   Widget _defaultMarkerPopup(marker) {
     return Container(
       alignment: Alignment.center,
@@ -187,5 +132,78 @@ class _MapPageState extends State<MapPage> {
         style: const TextStyle(color: Colors.white),
       ),
     );
+  }
+
+  Future<UserMarker?> _getCurrentUserMarker() async {
+    types.User currentUser = await _getCurrentUserInFirestore();
+    var curPos = await _getCurrentUserPosition();
+    return curPos == null
+        ? null
+        : UserMarker(position: curPos, user: currentUser);
+  }
+
+  Future<types.User> _getCurrentUserInFirestore() async {
+    types.User currentUser;
+    var userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+    var data = userDoc.data()!;
+    data.addAll({'id': FirebaseAuth.instance.currentUser!.uid});
+    print(data);
+    currentUser = types.User.fromJson(data);
+    return currentUser;
+  }
+
+  void _sweetWarningAboutPermanentlyDenied() {
+    showInfoDialog(context,
+        title: 'Ебать ты пидорас',
+        content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const <Widget>[
+              Text('Извините, но Вам придётся покончить с собой, так как '
+                  'вы запретили доступ к геолокации'),
+              Text('Либо зайти в настройки и там включить геолокацию',
+                  style: TextStyle(fontSize: 8)),
+            ]),
+        actions: [
+          ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Отмена')),
+          CupertinoButton.filled(
+              child: const Text('В настройки'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                openAppSettings();
+              })
+        ]);
+  }
+
+  // TODO: make cloud markers for user and smoke rooms
+  Future<Position?> _getCurrentUserPosition() async {
+    var locationStatus = await Permission.location.status;
+    if (locationStatus.isPermanentlyDenied) {
+      _sweetWarningAboutPermanentlyDenied();
+    } else if (locationStatus.isDenied) {
+      Permission.location.request().then((value) {
+        if (value.isPermanentlyDenied) {
+          _sweetWarningAboutPermanentlyDenied();
+        } else if (value.isLimited) {
+          showInfoDialog(context,
+              title: 'Ну почти нормально',
+              content: const Text(
+                  'Показывает value is Limited, пока не понятно че это'));
+        }
+      });
+    } else if (locationStatus.isGranted) {
+      return await Geolocator.getCurrentPosition().then((value) {
+        if (!mounted) return;
+        print('Пользователь был найден ебать');
+        setState(() {});
+      });
+    }
   }
 }
