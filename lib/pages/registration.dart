@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
-import 'package:in_pack/utils/show_error_dialog.dart';
+import 'package:in_pack/utils/show_dialog.dart';
 import 'package:in_pack/widgets/registration/email_field.dart';
 import 'package:in_pack/widgets/registration/password_field.dart';
 import 'package:in_pack/widgets/registration/register_btn.dart';
