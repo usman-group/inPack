@@ -24,8 +24,7 @@ class _RoomsPageState extends State<RoomsPage> {
           if (snapshot.hasError) {
             return Container(
               alignment: Alignment.center,
-              child:
-                  Text('Ошибочка вышла какая-то ${snapshot.error.toString()}'),
+              child: Text('Ошибка (((((9( : ${snapshot.error.toString()}'),
             );
           } else if (!snapshot.hasData) {
             if (snapshot.connectionState != ConnectionState.done) {
@@ -34,7 +33,10 @@ class _RoomsPageState extends State<RoomsPage> {
             } else {
               return Container(
                 alignment: Alignment.center,
-                child: const Text('Нет пользователей'),
+                child: const Text(
+                  'Нет пользователей',
+                  style: TextStyle(fontSize: 20),
+                ),
               );
             }
           }
@@ -54,7 +56,7 @@ class _RoomsPageState extends State<RoomsPage> {
 
   Widget _userBuilder({required types.User user}) {
     return GestureDetector(
-      onTap: () => _moveToRoom(user),
+      onTap: () => _createAndMoveToRoom(user),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         decoration: BoxDecoration(
@@ -82,8 +84,7 @@ class _RoomsPageState extends State<RoomsPage> {
     );
   }
 
-  void _moveToRoom(types.User otherUser) async {
-    print('TAS:LKFJL:KAJSFJKDS:FLJSKLF');
+  void _createAndMoveToRoom(types.User otherUser) async {
     await FirebaseChatCore.instance.createRoom(otherUser).then((room) {
       Navigator.of(context).push(
           MaterialPageRoute(builder: ((context) => ChatPage(room: room))));

@@ -1,8 +1,9 @@
-import 'package:in_pack/markers/markers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
+import 'package:in_pack/markers/markers.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -12,9 +13,10 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  static final MapController _mapController = MapController();
-  static final PopupController _popupController = PopupController();
-  final LatLng mainSmokeRoomCoords = LatLng(55.66965, 37.47935);
+  final MapController _mapController = MapController();
+  final PopupController _popupController = PopupController();
+
+  final LatLng mainSmokeRoomCoordinates = LatLng(55.66965, 37.47935);
   late final List<Marker> _markers;
   final LatLngBounds mainSmokeRoomBounds =
       LatLngBounds(LatLng(55.67102, 37.47649), LatLng(55.66853, 37.48386));
@@ -23,6 +25,17 @@ class _MapPageState extends State<MapPage> {
     LatLng(55.669649, 37.478643),
     LatLng(55.670194, 37.477297),
   ];
+  Future<Map<String, bool>> checkLocationPermission() async {
+    var locationStatus = Permission.locationWhenInUse.status;
+    return {
+      'isDenied': await locationStatus.isDenied,
+      'isLimited': await locationStatus.isLimited,
+      'isPermanentlyDenied': await locationStatus.isPermanentlyDenied,
+      'isGranted': await locationStatus.isGranted,
+      'isRestricted': await locationStatus.isRestricted
+    };
+  }
+
   @override
   void initState() {
     _markers = _latLngList
@@ -31,6 +44,7 @@ class _MapPageState extends State<MapPage> {
             name: 'МИРЭА',
             description: 'хайповая курилочка у входа в МИРЭА'))
         .toList();
+    checkLocationPermission().then((value) => print(value.toString()));
     super.initState();
   }
 
@@ -42,7 +56,7 @@ class _MapPageState extends State<MapPage> {
           plugins: <MapPlugin>[
             MarkerClusterPlugin(),
           ],
-          center: mainSmokeRoomCoords,
+          center: mainSmokeRoomCoordinates,
 
           /// Initial center if not specified bounds
           zoom: 18.5,
@@ -50,7 +64,8 @@ class _MapPageState extends State<MapPage> {
           /// Initial zoom if not specified bounds
           maxZoom: 19,
           minZoom: 1,
-          bounds: mainSmokeRoomBounds, // Initial map bounds
+          bounds: mainSmokeRoomBounds,
+          // Initial map bounds
           maxBounds: LatLngBounds(
             // Max map bounds
             LatLng(-90, -180.0),
@@ -70,7 +85,6 @@ class _MapPageState extends State<MapPage> {
           backgroundColor: Colors.black,
           urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           subdomains: ['a', 'b', 'c'],
-          // userAgentPackageName: 'com.in_pack.usmangroup', // for newer version
         ),
         MarkerClusterLayerOptions(
           maxClusterRadius: 190,

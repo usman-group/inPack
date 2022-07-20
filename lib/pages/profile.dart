@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 const String defaultImage =
     'https://sun9-47.userapi.com/c10668/u118752696/a_be977d28.jpg';
 
-/// Widget of profile page with edit capabilites
+/// Widget of profile page with edit capabilities
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
@@ -87,6 +87,41 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _nicknameBuilder() {
+    final editButton = Positioned(
+      bottom: -4,
+      right: 0,
+      child: CircleAvatar(
+        radius: 20,
+        backgroundColor: Colors.brown,
+        child: CircleAvatar(
+          radius: 15,
+          backgroundColor: Colors.white,
+          child: IconButton(
+            onPressed: _showChangeNicknameDialog,
+            icon: const Icon(
+              Icons.edit,
+              color: Colors.black,
+              size: 16,
+            ),
+          ),
+        ),
+      ),
+    );
+    final nickname = Center(
+      child: ValueListenableBuilder<String>(
+        valueListenable: _userName,
+        builder: (BuildContext context, String value, Widget? child) {
+          return Text(
+            value,
+            style: const TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Consolas'),
+          );
+        },
+      ),
+    );
     return Container(
       height: 70,
       width: 300,
@@ -95,41 +130,8 @@ class _ProfilePageState extends State<ProfilePage> {
         color: Colors.brown[800],
       ),
       child: Stack(fit: StackFit.expand, children: [
-        Center(
-          child: ValueListenableBuilder<String>(
-            valueListenable: _userName,
-            builder: (BuildContext context, String value, Widget? child) {
-              return Text(
-                value,
-                style: const TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Consolas'),
-              );
-            },
-          ),
-        ),
-        Positioned(
-          bottom: -4,
-          right: 0,
-          child: CircleAvatar(
-            radius: 20,
-            backgroundColor: Colors.brown,
-            child: CircleAvatar(
-              radius: 15,
-              backgroundColor: Colors.white,
-              child: IconButton(
-                onPressed: _showChangeNicknameDialog,
-                icon: const Icon(
-                  Icons.edit,
-                  color: Colors.black,
-                  size: 16,
-                ),
-              ),
-            ),
-          ),
-        ),
+        nickname,
+        editButton,
       ]),
     );
   }
