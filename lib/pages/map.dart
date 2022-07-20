@@ -1,74 +1,8 @@
+import 'package:in_pack/markers/markers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-abstract class MarkerWithData extends Marker {
-  MarkerWithData(
-      {required super.point,
-      required super.builder,
-      super.anchorPos,
-      super.height,
-      super.key,
-      super.rotate,
-      super.rotateAlignment,
-      super.rotateOrigin,
-      super.width});
-
-  Widget popupBuilder();
-  String get categoryName;
-}
-
-class SmokeRoomMarker extends MarkerWithData {
-  static const double markerSize = 30;
-  SmokeRoomMarker({
-    required super.point,
-    required this.name,
-    this.imageUrl,
-    this.description,
-  }) : super(height: markerSize, width: markerSize, builder: markerBuilder);
-  final String name;
-  final String? imageUrl;
-  final String? description;
-  static Widget markerBuilder(BuildContext context) {
-    return const Icon(
-      Icons.smoking_rooms_rounded,
-      color: Colors.brown,
-      size: markerSize,
-    );
-  }
-
-  @override
-  Widget popupBuilder() {
-    return SizedBox(
-      height: 250,
-      child: Card(
-        color: Colors.white,
-        child: Column(
-          children: [
-            Text(categoryName),
-            Text(
-              name,
-              style: const TextStyle(
-                  fontSize: 20, fontFamily: 'SF', fontWeight: FontWeight.bold),
-            ),
-            Image.network(
-              imageUrl ??
-                  'https://sun9-77.userapi.com/impf/EQmeC3URKZRfeCdM_pnB7LzrZpuBEzTwWeiVdQ/78O9We5g3rg.jpg?size=1242x1176&quality=96&sign=9e78c700d9449ee925b86d5da2cb527a&type=album',
-              height: 180,
-            ),
-            Text(description ??
-                'Нет описания, но вы можете его добавить ;);))%;(№), только пока нельзя соре'),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  String get categoryName => 'Курилка';
-}
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -157,20 +91,9 @@ class _MapPageState extends State<MapPage> {
           popupOptions: PopupOptions(
               popupSnap: PopupSnap.mapBottom,
               popupController: _popupController,
-              popupBuilder: (context, marker) => marker is MarkerWithData
+              popupBuilder: (context, marker) => marker is MarkerWithPopup
                   ? marker.popupBuilder()
-                  : Container(
-                      alignment: Alignment.center,
-                      height: 50,
-                      width: 50,
-                      decoration: const BoxDecoration(
-                          color: Colors.black, shape: BoxShape.rectangle),
-                      // TODO: Придумать как добавлять к маркеру дополнительную информацию
-                      child: Text(
-                        marker.point.toString(),
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )),
+                  : _defaultMarkerPopup(marker)),
           builder: (context, markers) {
             return Container(
               alignment: Alignment.center,
@@ -181,6 +104,20 @@ class _MapPageState extends State<MapPage> {
           },
         ),
       ],
+    );
+  }
+
+  Widget _defaultMarkerPopup(marker) {
+    return Container(
+      alignment: Alignment.center,
+      height: 50,
+      width: 50,
+      decoration:
+          const BoxDecoration(color: Colors.black, shape: BoxShape.rectangle),
+      child: Text(
+        marker.point.toString(),
+        style: TextStyle(color: Colors.white),
+      ),
     );
   }
 }
