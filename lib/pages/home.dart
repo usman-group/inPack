@@ -4,13 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:in_pack/pages/registration.dart';
 import 'bottom_navbar.dart';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:in_pack/pages/list.dart';
-import 'package:in_pack/pages/map.dart';
-import 'package:in_pack/pages/rooms.dart';
-import 'package:in_pack/pages/profile.dart';
-
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
