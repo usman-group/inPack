@@ -85,6 +85,8 @@ class UserMarker extends MarkerWithPopup {
   static Widget markerBuilder(BuildContext context) {
     return const Icon(
       CupertinoIcons.person_fill,
+      color: Colors.amberAccent,
+      size: 30,
     );
   }
 
@@ -110,8 +112,7 @@ class UserMarker extends MarkerWithPopup {
                   'https://sun9-77.userapi.com/impf/EQmeC3URKZRfeCdM_pnB7LzrZpuBEzTwWeiVdQ/78O9We5g3rg.jpg?size=1242x1176&quality=96&sign=9e78c700d9449ee925b86d5da2cb527a&type=album',
               height: 180,
             ),
-            Text(user.firstName ??
-                'Нет описания, но вы можете его добавить ;);))%;(№), только пока нельзя соре'),
+            Text(user.firstName ?? 'Имя'),
           ],
         ),
       ),
