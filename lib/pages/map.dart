@@ -25,6 +25,7 @@ class _MapPageState extends State<MapPage> {
   LatLng? currentUserLatLng;
   Position? currentUserPosition;
   UserMarker? currentUserMarker;
+  final List<Marker> _markers = [];
 
   Future<void> _initLocation() async {
     currentUserPosition = await _getCurrentUserPosition();
@@ -41,6 +42,7 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     _initLocation();
+    print(_markers);
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
@@ -86,9 +88,7 @@ class _MapPageState extends State<MapPage> {
           fitBoundsOptions: const FitBoundsOptions(
             padding: EdgeInsets.all(50),
           ),
-          markers: currentUserMarker != null
-              ? <Marker>[currentUserMarker!]
-              : const [],
+          markers: _markers,
           polygonOptions: const PolygonOptions(
               borderColor: Colors.blueAccent,
               color: Colors.black12,
@@ -137,9 +137,18 @@ class _MapPageState extends State<MapPage> {
   Future<UserMarker?> _getCurrentUserMarker() async {
     types.User currentUser = await _getCurrentUserInFirestore();
     var curPos = await _getCurrentUserPosition();
-    return curPos == null
-        ? null
-        : UserMarker(position: curPos, user: currentUser);
+    UserMarker? userMarker;
+    if (curPos == null) {
+      print('Пользователь не найден');
+    } else {
+      print('Пользователь найден');
+      userMarker = UserMarker(position: curPos, user: currentUser);
+      setState(() {
+        _mapController.move(userMarker!.point, 15);
+        _markers.add(userMarker);
+      });
+    }
+    return userMarker;
   }
 
   Future<types.User> _getCurrentUserInFirestore() async {
@@ -150,7 +159,6 @@ class _MapPageState extends State<MapPage> {
         .get();
     var data = userDoc.data()!;
     data.addAll({'id': FirebaseAuth.instance.currentUser!.uid});
-    print(data);
     currentUser = types.User.fromJson(data);
     return currentUser;
   }
@@ -184,6 +192,7 @@ class _MapPageState extends State<MapPage> {
 
   // TODO: make cloud markers for user and smoke rooms
   Future<Position?> _getCurrentUserPosition() async {
+    if (currentUserPosition != null) return currentUserPosition;
     var locationStatus = await Permission.location.status;
     if (locationStatus.isPermanentlyDenied) {
       _sweetWarningAboutPermanentlyDenied();
@@ -199,11 +208,7 @@ class _MapPageState extends State<MapPage> {
         }
       });
     } else if (locationStatus.isGranted) {
-      return await Geolocator.getCurrentPosition().then((value) {
-        if (!mounted) return;
-        print('Пользователь был найден ебать');
-        setState(() {});
-      });
+      return await Geolocator.getCurrentPosition();
     }
   }
 }
