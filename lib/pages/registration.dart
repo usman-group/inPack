@@ -2,10 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:in_pack/utils/show_dialog.dart';
-import 'package:in_pack/widgets/registration/email_field.dart';
-import 'package:in_pack/widgets/registration/password_field.dart';
-import 'package:in_pack/widgets/registration/register_btn.dart';
-import 'package:in_pack/widgets/registration/sign_in_btn.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 class RegisterPage extends StatefulWidget {
@@ -18,9 +14,107 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailController =
       TextEditingController(text: 'example@example.example');
-  final TextEditingController _passwordController =
-      TextEditingController(text: 'password');
+  final TextEditingController _passwordController = TextEditingController(
+    text: 'password',
+  );
   late UserCredential userCredential;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+        child: Column(
+          children: [
+            const Spacer(
+              flex: 3,
+            ),
+            _emailBuilder(),
+            const Spacer(),
+            _passwordBuild(),
+            const Spacer(
+              flex: 3,
+            ),
+            _signInButtonBuilder(),
+            const Spacer(),
+            _registerButtonBuilder(),
+            const Spacer(
+              flex: 4,
+            ),
+          ],
+        ));
+  }
+
+  Widget _passwordBuild() {
+    return TextField(
+        autocorrect: false,
+        autofillHints: const [AutofillHints.password],
+        controller: _passwordController,
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(8),
+            ),
+          ),
+          labelText: 'Password',
+          suffixIcon: Icon(Icons.cancel),
+        ),
+        keyboardType: TextInputType.emailAddress,
+        obscureText: true);
+  }
+
+  Widget _emailBuilder() {
+    return TextField(
+      autocorrect: false,
+      autofillHints: const [AutofillHints.email],
+      autofocus: true,
+      controller: _emailController,
+      decoration: const InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(8),
+          ),
+        ),
+        labelText: 'Email',
+      ),
+      keyboardType: TextInputType.emailAddress,
+      textCapitalization: TextCapitalization.none,
+      textInputAction: TextInputAction.next,
+    );
+  }
+
+  Widget _registerButtonBuilder() {
+    return ElevatedButton(
+        onPressed: () async {
+          _register();
+        },
+        child: const Padding(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+          child: Text(
+            'Регистрация',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+            ),
+          ),
+        ));
+  }
+
+  Widget _signInButtonBuilder() {
+    return ElevatedButton(
+        onPressed: () async {
+          _signIn();
+        },
+        child: const Padding(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+          child: Text(
+            'Войти',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+            ),
+          ),
+        ));
+  }
 
   void _signIn() async {
     try {
@@ -143,34 +237,5 @@ class _RegisterPageState extends State<RegisterPage> {
     } catch (e) {
       showErrorDialog(context, 'Ошибка при регистрации $e');
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        child: Column(
-          children: [
-            const Spacer(
-              flex: 3,
-            ),
-            EmailField(
-              emailController: _emailController,
-            ),
-            const Spacer(),
-            PasswordField(
-              passwordController: _passwordController,
-            ),
-            const Spacer(
-              flex: 3,
-            ),
-            SignInButton(signInMethod: _signIn),
-            const Spacer(),
-            RegisterButton(registerMethod: _register),
-            const Spacer(
-              flex: 4,
-            ),
-          ],
-        ));
   }
 }
