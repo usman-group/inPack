@@ -11,6 +11,10 @@ import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
+extension ToLatLng on Position {
+  get latLng => LatLng(latitude, longitude);
+}
+
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
 
@@ -19,50 +23,53 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  static final mainSmokeRoomLatLng = LatLng(55.6699, 37.4803);
   final MapController _mapController = MapController();
   final PopupController _popupController = PopupController();
-  static final mainSmokeRoomLatLng = LatLng(55.6699, 37.4803);
-  LatLng? currentUserLatLng;
-  Position? currentUserPosition;
-  UserMarker? currentUserMarker;
-  final List<Marker> _markers = [];
+  Future<PermissionStatus>? _locationPermission;
+  Future<Position?>? _currentUserPosition;
+  List<Marker> _markers = [];
 
-  Future<void> _initLocation() async {
-    currentUserPosition = await _getCurrentUserPosition();
-    currentUserLatLng = _positionToLatLng(currentUserPosition);
-    currentUserMarker = await _getCurrentUserMarker();
+  Future<Position?> get currentUserPosition =>
+      _currentUserPosition ?? _requestPosition();
+
+  Future<PermissionStatus> get locationPermission {
+    if (_locationPermission != null) {
+      return _locationPermission!;
+    } else {
+      _locationPermission = Permission.location.status;
+      return _locationPermission!;
+    }
+  }
+
+  void addUserMarker() async {
+    types.User user = await currentFirestoreUser;
+    Position? position = await currentUserPosition;
+    if (position != null) {
+      _markers[0] = UserMarker(position: position!, user: user);
+      _mapController.move(position.latLng, 17);
+    }
   }
 
   @override
   void initState() {
-    _initLocation();
+    addUserMarker();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _initLocation();
-    print(_markers);
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
           plugins: <MapPlugin>[
             MarkerClusterPlugin(),
           ],
-          center: currentUserLatLng ?? mainSmokeRoomLatLng,
-
-          /// Initial center if not specified bounds
+          center: mainSmokeRoomLatLng,
           zoom: 18.5,
-
-          /// Initial zoom if not specified bounds
           maxZoom: 19,
           minZoom: 1,
-
-          /// [bounds] is Initial map bounds
-          // bounds: currentPositionLatLng,
-
           maxBounds: LatLngBounds(
-            // Max map bounds
             LatLng(-90, -180.0),
             LatLng(90.0, 180.0),
           ),
@@ -72,7 +79,6 @@ class _MapPageState extends State<MapPage> {
           onTap: (tapPosition, LatLng latLng) =>
               _popupController.hideAllPopups()),
       layers: [
-        // Main layer of map
         TileLayerOptions(
           minZoom: 1,
           maxZoom: 19,
@@ -80,7 +86,6 @@ class _MapPageState extends State<MapPage> {
           urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           subdomains: ['a', 'b', 'c'],
         ),
-        // Layer of cluster markers with popups
         MarkerClusterLayerOptions(
           maxClusterRadius: 190,
           disableClusteringAtZoom: 16,
@@ -98,7 +103,7 @@ class _MapPageState extends State<MapPage> {
               popupController: _popupController,
               popupBuilder: (context, marker) => marker is MarkerWithPopup
                   ? marker.popupBuilder()
-                  : _defaultMarkerPopup(marker)),
+                  : _defaultPopupBuilder(marker)),
           builder: (context, markers) {
             return Container(
               alignment: Alignment.center,
@@ -112,15 +117,8 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  LatLng? _positionToLatLng(Position? position) {
-    if (position == null) {
-      return null;
-    } else {
-      return LatLng(position.latitude, position.longitude);
-    }
-  }
-
-  Widget _defaultMarkerPopup(marker) {
+  /// If Marker has no popup builder just show this popup
+  Widget _defaultPopupBuilder(marker) {
     return Container(
       alignment: Alignment.center,
       height: 50,
@@ -134,24 +132,8 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  Future<UserMarker?> _getCurrentUserMarker() async {
-    types.User currentUser = await _getCurrentUserInFirestore();
-    var curPos = await _getCurrentUserPosition();
-    UserMarker? userMarker;
-    if (curPos == null) {
-      print('Пользователь не найден');
-    } else {
-      print('Пользователь найден');
-      userMarker = UserMarker(position: curPos, user: currentUser);
-      setState(() {
-        _mapController.move(userMarker!.point, 15);
-        _markers.add(userMarker);
-      });
-    }
-    return userMarker;
-  }
-
-  Future<types.User> _getCurrentUserInFirestore() async {
+  /// Get current user from firestore that used in FirebaseChatCore
+  Future<types.User> get currentFirestoreUser async {
     types.User currentUser;
     var userDoc = await FirebaseFirestore.instance
         .collection('users')
@@ -163,7 +145,8 @@ class _MapPageState extends State<MapPage> {
     return currentUser;
   }
 
-  void _sweetWarningAboutPermanentlyDenied() {
+  /// Show warning if user permanently denied access to location
+  void _permanentlyDeniedWarning() {
     showInfoDialog(context,
         title: 'Ебать ты пидорас',
         content: Column(
@@ -190,25 +173,36 @@ class _MapPageState extends State<MapPage> {
         ]);
   }
 
-  // TODO: make cloud markers for user and smoke rooms
-  Future<Position?> _getCurrentUserPosition() async {
-    if (currentUserPosition != null) return currentUserPosition;
-    var locationStatus = await Permission.location.status;
-    if (locationStatus.isPermanentlyDenied) {
-      _sweetWarningAboutPermanentlyDenied();
-    } else if (locationStatus.isDenied) {
-      Permission.location.request().then((value) {
-        if (value.isPermanentlyDenied) {
-          _sweetWarningAboutPermanentlyDenied();
-        } else if (value.isLimited) {
-          showInfoDialog(context,
-              title: 'Ну почти нормально',
-              content: const Text(
-                  'Показывает value is Limited, пока не понятно че это'));
-        }
-      });
-    } else if (locationStatus.isGranted) {
-      return await Geolocator.getCurrentPosition();
+  /// Return current position
+  Future<Position?> _requestPosition() async {
+    PermissionStatus locationStatus = await Permission.location.status;
+
+    if (locationStatus.isGranted) {
+      return Geolocator.getCurrentPosition();
     }
+
+    if (locationStatus.isPermanentlyDenied) {
+      _permanentlyDeniedWarning();
+      return Geolocator.getLastKnownPosition();
+    }
+
+    if (locationStatus.isDenied) {
+      PermissionStatus newStatus = await Permission.location.request();
+
+      if (newStatus.isPermanentlyDenied) {
+        _permanentlyDeniedWarning();
+        return Geolocator.getLastKnownPosition();
+      }
+
+      if (newStatus.isLimited) {
+        print('Status is Limited');
+        return Geolocator.getCurrentPosition();
+      }
+
+      if (newStatus.isGranted) {
+        return Geolocator.getCurrentPosition();
+      }
+    }
+    return null;
   }
 }

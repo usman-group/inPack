@@ -76,7 +76,9 @@ class UserMarker extends MarkerWithPopup {
   UserMarker({required this.position, required this.user})
       : super(
             builder: markerBuilder,
-            point: LatLng(position.latitude, position.longitude));
+            point: LatLng(position.latitude, position.longitude),
+            width: 30,
+            height: 30);
   final types.User user;
   final Position position;
 
