@@ -39,7 +39,7 @@ class _HomeState extends State<Home> {
       ),
       body: FirebaseAuth.instance.currentUser == null
           ? const RegisterPage()
-          : BottomNavbar.bodyWidgets[_pageIndex],
+          : BottomNavbar.bodyWidgets[_pageIndex] as Widget,
       bottomNavigationBar: FirebaseAuth.instance.currentUser == null
           ? null
           : BottomNavbar(

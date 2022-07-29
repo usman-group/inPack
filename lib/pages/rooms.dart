@@ -4,12 +4,19 @@ import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:in_pack/pages/chat.dart';
 import 'package:in_pack/pages/profile.dart';
+import 'package:in_pack/utils/navbar_page.dart';
 
-class RoomsPage extends StatefulWidget {
+class RoomsPage extends StatefulWidget implements NavigationBarPage {
   const RoomsPage({Key? key}) : super(key: key);
 
   @override
   State<RoomsPage> createState() => _RoomsPageState();
+
+  @override
+  Icon get icon => const Icon(Icons.chat_bubble_outline);
+
+  @override
+  String get label => 'Чат';
 }
 
 class _RoomsPageState extends State<RoomsPage> {

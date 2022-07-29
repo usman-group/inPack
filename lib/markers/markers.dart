@@ -17,7 +17,7 @@ abstract class MarkerWithPopup extends Marker {
       super.rotateOrigin,
       super.width});
 
-  /// for build popup on map
+  /// For build popup on [FlutterMap]
   Widget popupBuilder();
   String get categoryName;
 }

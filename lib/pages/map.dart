@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:in_pack/markers/markers.dart';
+import 'package:in_pack/utils/navbar_page.dart';
 import 'package:in_pack/utils/show_dialog.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -15,20 +16,26 @@ extension ToLatLng on Position {
   get latLng => LatLng(latitude, longitude);
 }
 
-class MapPage extends StatefulWidget {
+class MapPage extends StatefulWidget implements NavigationBarPage {
   const MapPage({Key? key}) : super(key: key);
 
   @override
   State<MapPage> createState() => _MapPageState();
+
+  @override
+  Icon get icon => const Icon(Icons.maps_home_work_rounded);
+
+  @override
+  String get label => 'Карта';
 }
 
 class _MapPageState extends State<MapPage> {
   static final mainSmokeRoomLatLng = LatLng(55.6699, 37.4803);
   final MapController _mapController = MapController();
   final PopupController _popupController = PopupController();
+  List<Marker> markers = [];
   Future<PermissionStatus>? _locationPermission;
   Future<Position?>? _currentUserPosition;
-  List<Marker> _markers = [];
 
   Future<Position?> get currentUserPosition =>
       _currentUserPosition ?? _requestPosition();
@@ -42,18 +49,20 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  void addUserMarker() async {
+  void _addUserMarker() async {
     types.User user = await currentFirestoreUser;
     Position? position = await currentUserPosition;
     if (position != null) {
-      _markers[0] = UserMarker(position: position!, user: user);
+      setState(() {
+        markers.add(SmokeRoomMarker(point: position.latLng, name: 'Im'));
+      });
       _mapController.move(position.latLng, 17);
     }
   }
 
   @override
   void initState() {
-    addUserMarker();
+    _addUserMarker();
     super.initState();
   }
 
@@ -93,7 +102,7 @@ class _MapPageState extends State<MapPage> {
           fitBoundsOptions: const FitBoundsOptions(
             padding: EdgeInsets.all(50),
           ),
-          markers: _markers,
+          markers: markers,
           polygonOptions: const PolygonOptions(
               borderColor: Colors.blueAccent,
               color: Colors.black12,
@@ -132,7 +141,7 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  /// Get current user from firestore that used in FirebaseChatCore
+  /// Get current [User] from [FirebaseFirestore] that used in [FirebaseChatCore]
   Future<types.User> get currentFirestoreUser async {
     types.User currentUser;
     var userDoc = await FirebaseFirestore.instance

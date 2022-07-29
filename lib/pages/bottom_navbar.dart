@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:in_pack/pages/counter.dart';
+import 'package:in_pack/utils/navbar_page.dart';
 import 'rooms.dart';
 import 'profile.dart';
 import 'list.dart';
 import 'map.dart';
-import 'package:flutter/cupertino.dart';
 
 class BottomNavbar extends StatelessWidget {
   final void Function(int) onTap;
@@ -12,46 +13,26 @@ class BottomNavbar extends StatelessWidget {
   const BottomNavbar(
       {required this.onTap, required this.currentIndex, Key? key})
       : super(key: key);
-  static const bodyWidgets = [
+  static const bodyWidgets = <NavigationBarPage>[
     RoomsPage(),
     ProfilePage(),
     ListPage(),
     MapPage(),
+    CounterPage(),
   ];
+
+  List<BottomNavigationBarItem> _itemsBuilder() {
+    return bodyWidgets
+        .map((page) => BottomNavigationBarItem(
+            icon: page.icon,
+            label: page.label,
+            backgroundColor: Colors.brown[800]))
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) => BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              icon: const Icon(
-                Icons.chat_outlined,
-                color: Colors.white,
-              ),
-              label: 'Чат',
-              backgroundColor: Colors.brown[800]),
-          BottomNavigationBarItem(
-            icon: const Icon(
-              Icons.person,
-              color: Colors.white,
-            ),
-            backgroundColor: Colors.brown[500],
-            label: 'Профиль',
-          ),
-          BottomNavigationBarItem(
-              icon: const Icon(
-                Icons.list,
-                color: Colors.white,
-              ),
-              backgroundColor: Colors.brown[800],
-              label: 'Пачки'),
-          BottomNavigationBarItem(
-              icon: const Icon(
-                CupertinoIcons.map_pin_ellipse,
-                color: Colors.white,
-              ),
-              backgroundColor: Colors.brown[500],
-              label: 'Карта'),
-        ],
+        items: _itemsBuilder(),
         onTap: onTap,
         backgroundColor: Colors.white,
         unselectedItemColor: Colors.white,

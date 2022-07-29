@@ -2,16 +2,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:in_pack/utils/navbar_page.dart';
 
 const String defaultImage =
     'https://sun9-47.userapi.com/c10668/u118752696/a_be977d28.jpg';
 
 /// Widget of profile page with edit capabilities
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends StatefulWidget implements NavigationBarPage {
   const ProfilePage({Key? key}) : super(key: key);
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
+
+  @override
+  Icon get icon => const Icon(Icons.account_circle);
+
+  @override
+  String get label => 'Профиль';
 }
 
 class _ProfilePageState extends State<ProfilePage> {

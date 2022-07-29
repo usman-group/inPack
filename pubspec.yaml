@@ -10,37 +10,43 @@ environment:
 
 
 dependencies:
+  # Base
+  cupertino_icons: ^1.0.2
   cloud_firestore:
   firebase_core:
+  firebase_auth: ^3.4.1
+  firebase_storage:
+  flutter_bloc: ^8.0.0
+  meta:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
+  # Chat
+  flutter_firebase_chat_core: ^1.6.2
   flutter_chat_ui: ^1.6.3
   flutter_chat_types: ^3.4.3
-  firebase_auth: ^3.4.1
-  flutter_firebase_chat_core: ^1.6.2
   file_picker:
   image_picker:
   path_provider:
   open_file:
-  firebase_storage:
   faker:
   mime:
   http:
-  flutter_map_marker_cluster: ^0.5.0
+  # Map
   flutter_map:
-  latlong2:
-  permission_handler:
+  flutter_map_marker_cluster: ^0.5.0
   geolocator: ^9.0.1
+  permission_handler:
+  latlong2:
+
 dev_dependencies:
+  flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
   assets:
-     - assets/Pavel.jpg
+     - assets/Pavel.jpg 
 
   fonts:
      - family: Gantari
