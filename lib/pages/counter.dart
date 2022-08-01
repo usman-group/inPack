@@ -1,32 +1,101 @@
-import 'dart:io';
 import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:in_pack/bloc/cigarette_bloc.dart';
+import 'package:in_pack/models/cigarette.dart';
 import 'package:in_pack/utils/navbar_page.dart';
 
-Stream stream() async* {
-  while (true) {
-    await Future.delayed(const Duration(seconds: 1));
-    yield Random().nextInt(1000);
-  }
-}
-
-class CounterPage extends StatelessWidget implements NavigationBarPage {
+class CounterPage extends StatefulWidget implements NavigationBarPage {
   const CounterPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-        height: 100,
-        width: 100,
-        child: StreamBuilder(
-          builder: (context, snapshot) => Text(snapshot.data.toString()),
-          stream: stream(),
-        ));
-  }
+  State<CounterPage> createState() => _CounterPageState();
 
   @override
-  get icon => const Icon(Icons.add);
+  get icon => const Icon(Icons.smoking_rooms_rounded);
 
   @override
-  get label => 'Счётчик';
+  get label => 'Пачки';
+}
+
+class _CounterPageState extends State<CounterPage> {
+  @override
+  Widget build(BuildContext context) => MultiBlocProvider(
+          providers: [
+            BlocProvider<CigaretteBloc>(
+                create: (context) => CigaretteBloc()..add(LoadCigarette())),
+          ],
+          child: Builder(builder: (context) {
+            return Scaffold(
+              body: BlocBuilder<CigaretteBloc, CigaretteState>(
+                builder: (context, state) {
+                  if (state is CigaretteInitial) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is CigaretteLoaded) {
+                    final random = Random();
+                    return Column(
+                      children: [
+                        Text(
+                          state.cigarettes.length.toString(),
+                          style:
+                              const TextStyle(fontSize: 20, fontFamily: 'SF'),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height / 1.5,
+                          width: MediaQuery.of(context).size.width,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            clipBehavior: Clip.none,
+                            children: state.cigarettes
+                                .map((cigarette) => Positioned(
+                                    left: random.nextInt(250).toDouble(),
+                                    top: random.nextInt(400).toDouble(),
+                                    child: SizedBox(
+                                        height: 150,
+                                        width: 150,
+                                        child: cigarette.image)))
+                                .toList(),
+                          ),
+                        )
+                      ],
+                    );
+                  } else {
+                    return const Text('Something went wrong');
+                  }
+                },
+              ),
+              floatingActionButton:
+                  Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                FloatingActionButton(
+                    child: const Icon(Icons.smoking_rooms),
+                    onPressed: () {
+                      context.read<CigaretteBloc>().add(
+                            AddCigarette(Cigarette.cigarettes[0]),
+                          );
+                    }),
+                FloatingActionButton(
+                    child: const Icon(Icons.smoke_free),
+                    onPressed: () {
+                      context.read<CigaretteBloc>().add(
+                            RemoveCigarette(Cigarette.cigarettes[0]),
+                          );
+                    }),
+                FloatingActionButton(
+                    child: const Icon(Icons.smoking_rooms_rounded),
+                    onPressed: () {
+                      context.read<CigaretteBloc>().add(
+                            AddCigarette(Cigarette.cigarettes[1]),
+                          );
+                    }),
+                FloatingActionButton(
+                    child: const Icon(Icons.smoke_free_rounded),
+                    onPressed: () {
+                      context.read<CigaretteBloc>().add(
+                            RemoveCigarette(Cigarette.cigarettes[1]),
+                          );
+                    })
+              ]),
+            );
+          }));
 }
