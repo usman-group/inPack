@@ -89,6 +89,7 @@ class _RoomsPageState extends State<RoomsPage> {
             ),
             const Padding(padding: EdgeInsets.only(right: 10)),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   otherUser.firstName ?? 'NoName',
@@ -98,9 +99,10 @@ class _RoomsPageState extends State<RoomsPage> {
                       fontFamily: 'Consolas',
                       fontWeight: FontWeight.bold),
                 ),
+                const SizedBox(height: 5),
                 Text(
                   lastMessageText ?? 'Нет сообщений',
-                  style: const TextStyle(color: Colors.black12),
+                  style: const TextStyle(color: Colors.white54),
                 ),
               ],
             ),

@@ -45,7 +45,7 @@ class _AppState extends State<App> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<MapBloc>(create: (context) => MapBloc()),
-        BlocProvider<CigaretteBloc>(create: (context) => CigaretteBloc()),
+        BlocProvider<CigaretteBloc>(create: (context) => CigaretteBloc()..add(LoadCigarette())),
       ],
       child: Scaffold(
         backgroundColor: const Color(0xFF6E4B3F),

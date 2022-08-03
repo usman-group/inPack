@@ -49,19 +49,9 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  void _addUserMarker() async {
-    Position? position = await currentUserPosition;
-    if (position != null) {
-      setState(() {
-        markers.add(SmokeRoomMarker(point: position.latLng, name: 'Im'));
-      });
-      _mapController.move(position.latLng, 17);
-    }
-  }
 
   @override
   void initState() {
-    _addUserMarker();
     super.initState();
   }
 
