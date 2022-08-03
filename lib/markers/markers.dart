@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,14 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
-abstract class MarkerWithPopup extends Marker {
+class EquatableMarker extends Marker with EquatableMixin{
+  EquatableMarker({required super.point, required super.builder, super.anchorPos, super.height, super.key, super.rotate, super.rotateAlignment, super.rotateOrigin, super.width});
+
+  @override
+  List<Object?> get props => [point];
+}
+
+abstract class MarkerWithPopup extends EquatableMarker {
   MarkerWithPopup(
       {required super.point,
       required super.builder,

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:in_pack/pages/chat.dart';
 import 'package:in_pack/pages/profile.dart';
 import 'package:in_pack/utils/navbar_page.dart';
@@ -26,44 +26,55 @@ class _RoomsPageState extends State<RoomsPage> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List>(
-        stream: FirebaseChatCore.instance.users(),
+        stream: FirebaseChatCore.instance.rooms(),
         builder: ((context, snapshot) {
           if (snapshot.hasError) {
+            throw 'Error in get rooms';
+          }
+          if (!snapshot.hasData &&
+              snapshot.connectionState != ConnectionState.done) {
+            return const Center(
+                child: CircularProgressIndicator(color: Colors.white));
+          }
+          if ((!snapshot.hasData || snapshot.data == []) &&
+              snapshot.connectionState == ConnectionState.done) {
             return Container(
               alignment: Alignment.center,
-              child: Text('Ошибка (((((9( : ${snapshot.error.toString()}'),
+              child: const Text(
+                'Вы пока ни с кем не общались, поищите кого-нибудь на карте',
+                style: TextStyle(fontSize: 20),
+              ),
             );
-          } else if (!snapshot.hasData) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(
-                  child: CircularProgressIndicator(color: Colors.white));
-            } else {
-              return Container(
-                alignment: Alignment.center,
-                child: const Text(
-                  'Нет пользователей',
-                  style: TextStyle(fontSize: 20),
-                ),
-              );
-            }
           }
-          return Container(
-            padding: const EdgeInsets.all(10),
-            child: ListView.separated(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (BuildContext context, int idx) {
-                  types.User user = snapshot.data![idx];
-                  return _userBuilder(user: user);
-                },
-                separatorBuilder: (BuildContext context, int index) =>
-                    const Padding(padding: EdgeInsets.only(bottom: 7))),
-          );
+          if (snapshot.hasData && snapshot.data != []) {
+            return Container(
+              padding: const EdgeInsets.all(10),
+              child: ListView.separated(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (BuildContext context, int idx) {
+                    types.Room room = snapshot.data![idx];
+                    return _roomBuilder(room);
+                  },
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const Padding(padding: EdgeInsets.only(bottom: 7))),
+            );
+          }
+          throw 'Error in getting rooms';
         }));
   }
 
-  Widget _userBuilder({required types.User user}) {
+  Widget _roomBuilder(types.Room room) {
+    final types.User otherUser = room.users[0];
+    final types.Message? lastMessage = room.lastMessages?.last;
+    String? lastMessageText = lastMessage?.type == types.MessageType.text
+        ? (lastMessage as types.TextMessage).text
+        : null;
     return GestureDetector(
-      onTap: () => _createAndMoveToRoom(user),
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: ((context) => ChatPage(room: room)),
+        ),
+      ),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         decoration: BoxDecoration(
@@ -73,28 +84,29 @@ class _RoomsPageState extends State<RoomsPage> {
         child: Row(
           children: <Widget>[
             CircleAvatar(
-              backgroundImage: NetworkImage(user.imageUrl ?? defaultImage),
+              backgroundImage: NetworkImage(otherUser.imageUrl ?? defaultImage),
               radius: 27,
             ),
             const Padding(padding: EdgeInsets.only(right: 10)),
-            Text(
-              user.firstName ?? 'NoName',
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontFamily: 'Consolas',
-                  fontWeight: FontWeight.bold),
+            Column(
+              children: [
+                Text(
+                  otherUser.firstName ?? 'NoName',
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontFamily: 'Consolas',
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  lastMessageText ?? 'Нет сообщений',
+                  style: const TextStyle(color: Colors.black12),
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
-  }
-
-  void _createAndMoveToRoom(types.User otherUser) async {
-    await FirebaseChatCore.instance.createRoom(otherUser).then((room) {
-      Navigator.of(context).push(
-          MaterialPageRoute(builder: ((context) => ChatPage(room: room))));
-    });
   }
 }

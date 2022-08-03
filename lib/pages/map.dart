@@ -30,7 +30,7 @@ class MapPage extends StatefulWidget implements NavigationBarPage {
 }
 
 class _MapPageState extends State<MapPage> {
-  static final mainSmokeRoomLatLng = LatLng(55.6699, 37.4803);
+  static final mireaLatLng = LatLng(55.6699, 37.4803);
   final MapController _mapController = MapController();
   final PopupController _popupController = PopupController();
   List<Marker> markers = [];
@@ -50,7 +50,6 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _addUserMarker() async {
-    types.User user = await currentFirestoreUser;
     Position? position = await currentUserPosition;
     if (position != null) {
       setState(() {
@@ -74,7 +73,7 @@ class _MapPageState extends State<MapPage> {
           plugins: <MapPlugin>[
             MarkerClusterPlugin(),
           ],
-          center: mainSmokeRoomLatLng,
+          center: mireaLatLng,
           zoom: 18.5,
           maxZoom: 19,
           minZoom: 1,

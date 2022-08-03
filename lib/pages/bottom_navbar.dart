@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:in_pack/pages/counter.dart';
+import 'package:in_pack/pages/cigarette.dart';
 import 'package:in_pack/utils/navbar_page.dart';
 import 'rooms.dart';
 import 'profile.dart';
@@ -18,7 +18,7 @@ class BottomNavbar extends StatelessWidget {
     ProfilePage(),
     ListPage(),
     MapPage(),
-    CounterPage(),
+    CigarettePage(),
   ];
 
   List<BottomNavigationBarItem> _itemsBuilder() {
