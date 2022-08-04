@@ -98,7 +98,7 @@ class _MapPageState extends State<MapPage> {
                   popupSnap: PopupSnap.mapBottom,
                   popupController: _popupController,
                   popupBuilder: (context, marker) => marker is MarkerWithPopup
-                      ? marker.popupBuilder()
+                      ? marker.popupBuilder(context)
                       : _defaultPopupBuilder(marker)),
               builder: (context, markers) {
                 return Container(

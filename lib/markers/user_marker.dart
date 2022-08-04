@@ -31,31 +31,52 @@ class UserMarker extends MarkerWithPopup {
   }
 
   @override
-  Widget popupBuilder() {
-    return SizedBox(
-      height: 250,
-      child: Card(
-        color: Colors.white,
-        child: Column(
-          children: [
-            Text(
-              'Категория: $categoryName',
-              style: const TextStyle(
-                  fontSize: 20, fontFamily: 'SF', fontWeight: FontWeight.bold),
-            ),
-            Image.network(
-              user.imageUrl ?? defaultUserImageUrl,
-              height: 180,
-            ),
-            user.firstName == null
-                ? const Text(
-                    'Нет имени',
-                    style: emptyFieldTextStyle,
-                  )
-                : Text(user.firstName!,
-                    style: const TextStyle(fontWeight: FontWeight.bold))
-          ],
-        ),
+  Widget popupBuilder(BuildContext context) {
+    final NetworkImage userImage =
+        NetworkImage(user.imageUrl ?? defaultUserImageUrl);
+    final String userName = user.firstName ?? 'Нет имени';
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(35),
+        color: const Color(0xFFD8D8D8),
+        border: Border.all(color: Colors.black26),
+      ),
+      height: 220,
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 75 / 2,
+                backgroundImage: userImage,
+              ),
+              const SizedBox(
+                width: 30,
+              ),
+              Text(
+                userName,
+                style: const TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold),
+              )
+            ],
+          ),
+          const SizedBox(height: 20),
+          Container(
+            alignment: Alignment.center,
+            height: 75,
+            // width: 275,
+            decoration: BoxDecoration(
+                color: const Color(0xFFC55252),
+                borderRadius: BorderRadius.circular(20)),
+            child: const Text('MARLBORO RED',
+                style: TextStyle(fontSize: 25, color: Colors.white)),
+          )
+        ],
       ),
     );
   }

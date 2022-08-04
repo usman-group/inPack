@@ -34,7 +34,7 @@ abstract class MarkerWithPopup extends EquatableMarker {
       : super(height: markerSize, width: markerSize);
 
   /// For build popup on [FlutterMap]
-  Widget popupBuilder();
+  Widget popupBuilder(BuildContext context);
 
   String get categoryName;
 }

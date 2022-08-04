@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_pack/bloc/cigarette_bloc.dart';
 import 'package:in_pack/pages/registration.dart';
-import 'package:in_pack/pages/bottom_navbar.dart';
+import 'package:in_pack/widgets/bottom_navbar.dart';
 
 import 'bloc/map_bloc.dart';
 import 'firebase_options.dart';
