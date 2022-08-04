@@ -44,7 +44,7 @@ class _AppState extends State<App> {
     });
     return MultiBlocProvider(
       providers: [
-        BlocProvider<MapBloc>(create: (context) => MapBloc()),
+        BlocProvider<MapBloc>(create: (context) => MapBloc()..add(RequestLocation())),
         BlocProvider<CigaretteBloc>(create: (context) => CigaretteBloc()..add(LoadCigarette())),
       ],
       child: Scaffold(
