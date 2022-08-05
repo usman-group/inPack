@@ -32,6 +32,7 @@ class BottomNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BottomNavigationBar(
+        showUnselectedLabels: true,
         items: _itemsBuilder(),
         onTap: onTap,
         backgroundColor: Colors.white,

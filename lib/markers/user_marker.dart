@@ -5,8 +5,8 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 import 'markers.dart';
 
-class UserMarker extends MarkerWithPopup {
-  UserMarker({required this.position, required this.user})
+class CurrentUserMarker extends MarkerWithPopup {
+  CurrentUserMarker({required this.position, required this.user})
       : super(
             builder: markerBuilder,
             point: LatLng(position.latitude, position.longitude));
