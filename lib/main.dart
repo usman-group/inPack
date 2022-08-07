@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:in_pack/bloc/cigarette_bloc.dart';
 import 'package:in_pack/pages/registration.dart';
 import 'package:in_pack/widgets/bottom_navbar.dart';
@@ -47,7 +46,7 @@ class _AppState extends State<App> {
     });
     return MultiBlocProvider(
       providers: [
-        BlocProvider<MapBloc>(create: (context) => MapBloc(MapController())..add(RequestLocation())),
+        BlocProvider<MapBloc>(create: (context) => MapBloc()),
         BlocProvider<CigaretteBloc>(create: (context) => CigaretteBloc()..add(LoadCigarette())),
       ],
       child: Scaffold(

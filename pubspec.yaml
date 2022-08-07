@@ -1,7 +1,7 @@
 name: in_pack
-description: A new Flutter project.
+description: project for social smokers.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -17,6 +17,7 @@ dependencies:
   firebase_auth: ^3.4.1
   firebase_storage:
   flutter_bloc: ^8.0.0
+  json_annotation: ^4.6.0
   bloc:
   meta:
   flutter:
@@ -42,6 +43,8 @@ dependencies:
 
 dev_dependencies:
   flutter_lints: ^2.0.0
+  json_serializable: ^6.3.1
+  build_runner: 
   flutter_test:
     sdk: flutter
 
