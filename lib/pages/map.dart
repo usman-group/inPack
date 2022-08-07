@@ -8,13 +8,9 @@ import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:in_pack/bloc/map_bloc.dart';
 import 'package:in_pack/markers/markers.dart';
-import 'package:in_pack/markers/user_marker.dart';
+import 'package:in_pack/markers/current_user_marker.dart';
 import 'package:in_pack/utils/navbar_page.dart';
 import 'package:latlong2/latlong.dart';
-
-extension ToLatLng on Position {
-  get latLng => LatLng(latitude, longitude);
-}
 
 class MapPage extends StatefulWidget implements NavigationBarPage {
   const MapPage({Key? key}) : super(key: key);
@@ -31,85 +27,93 @@ class MapPage extends StatefulWidget implements NavigationBarPage {
 
 class _MapPageState extends State<MapPage> {
   static final mireaLatLng = LatLng(55.6699, 37.4803);
-  final MapController _mapController = MapController();
   final PopupController _popupController = PopupController();
+  final MapController _mapController = MapController();
   late final MapBloc _bloc;
-  
+
   @override
   void initState() {
     _bloc = context.read<MapBloc>();
+    _bloc.add(RequestLocation(_mapController));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<MapBloc, MapState>(
-      listener: (context, state) async {
-        if (state.userPosition != null) {
-          _mapController.move(state.userPosition!.latLng, 16);
-          _bloc.add(AddMarker(UserMarker(
-              user: await currentFirestoreUser,
-              position: state.userPosition!)));
-        }
-      },
+    return BlocBuilder<MapBloc, MapState>(
       builder: (context, state) {
-        return FlutterMap(
-          mapController: _mapController,
-          options: MapOptions(
-              plugins: <MapPlugin>[
-                MarkerClusterPlugin(),
-              ],
-              center: mireaLatLng,
-              zoom: 18.5,
-              maxZoom: 19,
-              minZoom: 1,
-              maxBounds: LatLngBounds(
-                LatLng(-90, -180.0),
-                LatLng(90.0, 180.0),
+        return Scaffold(
+          body: FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+                plugins: <MapPlugin>[
+                  MarkerClusterPlugin(),
+                ],
+                center: mireaLatLng,
+                zoom: 18.5,
+                maxZoom: 19,
+                minZoom: 1,
+                maxBounds: LatLngBounds(
+                  LatLng(-90, -180.0),
+                  LatLng(90.0, 180.0),
+                ),
+                rotation: 0,
+                interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                enableScrollWheel: true,
+                onTap: (tapPosition, LatLng latLng) =>
+                    _popupController.hideAllPopups()),
+            layers: [
+              TileLayerOptions(
+                minZoom: 1,
+                maxZoom: 19,
+                backgroundColor: Colors.black,
+                urlTemplate:
+                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                subdomains: ['a', 'b', 'c'],
               ),
-              rotation: 0,
-              interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate,
-              enableScrollWheel: true,
-              onTap: (tapPosition, LatLng latLng) =>
-                  _popupController.hideAllPopups()),
-          layers: [
-            TileLayerOptions(
-              minZoom: 1,
-              maxZoom: 19,
-              backgroundColor: Colors.black,
-              urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-              subdomains: ['a', 'b', 'c'],
-            ),
 
-            // All work with markers
-            MarkerClusterLayerOptions(
-              maxClusterRadius: 190,
-              disableClusteringAtZoom: 16,
-              size: const Size(50, 50),
-              fitBoundsOptions: const FitBoundsOptions(
-                padding: EdgeInsets.all(50),
+              // All work with markers
+              MarkerClusterLayerOptions(
+                maxClusterRadius: 190,
+                disableClusteringAtZoom: 16,
+                size: const Size(50, 50),
+                fitBoundsOptions: const FitBoundsOptions(
+                  padding: EdgeInsets.all(50),
+                ),
+                markers: state.markers,
+                polygonOptions: const PolygonOptions(
+                    borderColor: Colors.blueAccent,
+                    color: Colors.black12,
+                    borderStrokeWidth: 3),
+                popupOptions: PopupOptions(
+                    popupSnap: PopupSnap.mapBottom,
+                    popupController: _popupController,
+
+                    /// Widget of marker popup
+                    popupBuilder: (context, marker) => marker is MarkerWithPopup
+                        ? marker.popupBuilder(context)
+                        : _defaultPopupBuilder(marker)),
+
+                /// Widget of markers cluster
+                builder: (context, markers) {
+                  return Container(
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(
+                        color: Colors.orange, shape: BoxShape.circle),
+                    child: Text('${markers.length}'),
+                  );
+                },
               ),
-              markers: state.markers,
-              polygonOptions: const PolygonOptions(
-                  borderColor: Colors.blueAccent,
-                  color: Colors.black12,
-                  borderStrokeWidth: 3),
-              popupOptions: PopupOptions(
-                  popupSnap: PopupSnap.mapBottom,
-                  popupController: _popupController,
-                  popupBuilder: (context, marker) => marker is MarkerWithPopup
-                      ? marker.popupBuilder()
-                      : _defaultPopupBuilder(marker)),
-              builder: (context, markers) {
-                return Container(
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                      color: Colors.orange, shape: BoxShape.circle),
-                  child: Text('${markers.length}'),
-                );
-              },
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              _bloc.add(FabTap(_mapController));
+            },
+            child: const Icon(
+              Icons.navigation_sharp,
             ),
-          ],
+          ),
         );
       },
     );
@@ -129,19 +133,4 @@ class _MapPageState extends State<MapPage> {
       ),
     );
   }
-
-  /// Get current [User] from [FirebaseFirestore] that used in [FirebaseChatCore]
-  Future<types.User> get currentFirestoreUser async {
-    types.User currentUser;
-    var userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
-    var data = userDoc.data()!;
-    data.addAll({'id': FirebaseAuth.instance.currentUser!.uid});
-    currentUser = types.User.fromJson(data);
-    return currentUser;
-  }
-
-
 }

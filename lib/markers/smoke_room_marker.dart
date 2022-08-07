@@ -24,7 +24,7 @@ class SmokeRoomMarker extends MarkerWithPopup {
   }
 
   @override
-  Widget popupBuilder() {
+  Widget popupBuilder(BuildContext context) {
     return SizedBox(
       height: 250,
       child: Card(

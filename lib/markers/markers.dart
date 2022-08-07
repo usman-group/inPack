@@ -30,11 +30,12 @@ abstract class MarkerWithPopup extends EquatableMarker {
       super.key,
       super.rotate,
       super.rotateAlignment,
-      super.rotateOrigin})
-      : super(height: markerSize, width: markerSize);
+      super.rotateOrigin,
+      super.height = markerSize,
+      super.width = markerSize});
 
   /// For build popup on [FlutterMap]
-  Widget popupBuilder();
+  Widget popupBuilder(BuildContext context);
 
   String get categoryName;
 }

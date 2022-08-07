@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:in_pack/pages/cigarette.dart';
 import 'package:in_pack/utils/navbar_page.dart';
-import 'rooms.dart';
-import 'profile.dart';
-import 'list.dart';
-import 'map.dart';
+import 'package:in_pack/pages/rooms.dart';
+import 'package:in_pack/pages/profile.dart';
+import 'package:in_pack/pages/list.dart';
+import 'package:in_pack/pages/map.dart';
 
 class BottomNavbar extends StatelessWidget {
   final void Function(int) onTap;
@@ -32,6 +32,7 @@ class BottomNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BottomNavigationBar(
+        showUnselectedLabels: true,
         items: _itemsBuilder(),
         onTap: onTap,
         backgroundColor: Colors.white,
