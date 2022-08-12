@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_pack/bloc/cigarette_bloc.dart';
 import 'package:in_pack/models/cigarette.dart';
-import 'package:in_pack/utils/navbar_page.dart';
+import 'package:in_pack/widgets/bottom_navbar.dart';
 
 class CigarettePage extends StatefulWidget implements NavigationBarPage {
   const CigarettePage({super.key});

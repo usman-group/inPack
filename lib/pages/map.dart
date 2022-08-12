@@ -1,15 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:in_pack/bloc/map_bloc.dart';
 import 'package:in_pack/markers/markers.dart';
-import 'package:in_pack/markers/current_user_marker.dart';
-import 'package:in_pack/utils/navbar_page.dart';
+import 'package:in_pack/widgets/bottom_navbar.dart';
 import 'package:latlong2/latlong.dart';
 
 class MapPage extends StatefulWidget implements NavigationBarPage {
@@ -108,7 +103,7 @@ class _MapPageState extends State<MapPage> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              _bloc.add(FabTap(_mapController));
+              _bloc.add(MoveToCurrentPosition(_mapController));
             },
             child: const Icon(
               Icons.navigation_sharp,

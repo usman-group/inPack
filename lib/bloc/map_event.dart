@@ -12,10 +12,9 @@ class RequestLocation extends MapEvent {
 
 class MoveToUser extends MapEvent {}
 
-/// On tap floating action button in map page
-class FabTap extends MapEvent {
+class MoveToCurrentPosition extends MapEvent {
   final MapController mapController;
-  const FabTap(this.mapController);
+  const MoveToCurrentPosition(this.mapController);
 }
 
 class AddMarker extends MapEvent {

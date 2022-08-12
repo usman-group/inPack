@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:in_pack/bloc/authorisation_bloc.dart';
 import 'package:in_pack/bloc/cigarette_bloc.dart';
-import 'package:in_pack/pages/registration.dart';
+import 'package:in_pack/pages/authorisation.dart';
+import 'package:in_pack/repositories/user_repository.dart';
 import 'package:in_pack/widgets/bottom_navbar.dart';
-
 
 import 'bloc/map_bloc.dart';
 import 'firebase_options.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +27,6 @@ void main() async {
     debugShowCheckedModeBanner: false,
   ));
 }
-
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -47,7 +46,10 @@ class _AppState extends State<App> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<MapBloc>(create: (context) => MapBloc()),
-        BlocProvider<CigaretteBloc>(create: (context) => CigaretteBloc()..add(LoadCigarette())),
+        BlocProvider<CigaretteBloc>(
+            create: (context) => CigaretteBloc()..add(LoadCigarette())),
+        BlocProvider<AuthorisationBloc>(
+            create: (context) => AuthorisationBloc(UserRepository()))
       ],
       child: Scaffold(
         backgroundColor: const Color(0xFF6E4B3F),
@@ -57,16 +59,16 @@ class _AppState extends State<App> {
           backgroundColor: Colors.black38,
         ),
         body: FirebaseAuth.instance.currentUser == null
-            ? const RegisterPage()
+            ? const AuthorisationPage()
             : BottomNavbar.bodyWidgets[_pageIndex] as Widget,
         bottomNavigationBar: FirebaseAuth.instance.currentUser == null
             ? null
             : BottomNavbar(
-          onTap: (idx) => setState(() {
-            _pageIndex = idx;
-          }),
-          currentIndex: _pageIndex,
-        ),
+                onTap: (idx) => setState(() {
+                  _pageIndex = idx;
+                }),
+                currentIndex: _pageIndex,
+              ),
       ),
     );
   }

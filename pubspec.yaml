@@ -22,10 +22,6 @@ dependencies:
   meta:
   flutter:
     sdk: flutter
-  # Chat
-  flutter_firebase_chat_core: ^1.6.2
-  flutter_chat_ui: ^1.6.3
-  flutter_chat_types: ^3.4.3
   file_picker:
   image_picker:
   path_provider:

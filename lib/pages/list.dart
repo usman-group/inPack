@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:in_pack/utils/navbar_page.dart';
+import 'package:in_pack/widgets/bottom_navbar.dart';
 
 class ListPage extends StatefulWidget implements NavigationBarPage {
   const ListPage({Key? key}) : super(key: key);

@@ -7,12 +7,33 @@ class CigarettePack {
   final String name;
   final CigaretteType type;
   final CigaretteLogo logo;
-    
-  CigarettePack(this.name, this.type, this.logo);
 
-  static List<CigarettePack> cigarettePacks = [
-    CigarettePack('Marlboro Red', CigaretteType.regular, CigaretteLogo(backgroundColor: Colors.red, logoText: const Text('MARLBORO RED',
-          style: TextStyle(fontSize: 25, color: Colors.white)),))
+  const CigarettePack(this.name, this.type, this.logo);
+
+  static List<CigarettePack> cigarettePacks = const [
+    CigarettePack(
+        'Marlboro Red',
+        CigaretteType.regular,
+        CigaretteLogo(
+          backgroundColor: Colors.red,
+          logoText: Text('MARLBORO RED',
+              style: TextStyle(fontSize: 25, color: Colors.white)),
+        )),
+    CigarettePack(
+        'Winston Blue Super Slim',
+        CigaretteType.slim,
+        CigaretteLogo(
+          backgroundColor: Colors.blue,
+          logoText: Text('WINSTON BLUE SUPER SLIM',
+              style: TextStyle(fontSize: 25, color: Colors.white)),
+        )),
   ];
 
+  String toJson() {
+    return cigarettePacks.indexOf(this).toString();
+  }
+
+  factory CigarettePack.fromJson(String jsonString) {
+    return CigarettePack.cigarettePacks[int.parse(jsonString)];
+  }
 }

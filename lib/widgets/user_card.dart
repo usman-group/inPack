@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:in_pack/models/user.dart';
 
 class UserCard extends StatelessWidget {
   const UserCard(this.user, {super.key});
 
-  final types.User user;
+  final User user;
   static const defaultUserImageUrl =
       'https://sun9-77.userapi.com/impf/EQmeC3URKZRfeCdM_pnB7LzrZpuBEzTwWeiVdQ/78O9We5g3rg.jpg?size=1242x1176&quality=96&sign=9e78c700d9449ee925b86d5da2cb527a&type=album';
   @override
   Widget build(BuildContext context) {
     final NetworkImage userImage =
         NetworkImage(user.imageUrl ?? defaultUserImageUrl);
-    final String userName = user.firstName ?? 'Нет имени';
+    final String userName = user.name;
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(20),
@@ -43,17 +43,7 @@ class UserCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          // Cigarette logo
-          user.metadata?['cigarettePack'],
-          // Container(
-          //   alignment: Alignment.center,
-          //   height: 75,
-          //   decoration: BoxDecoration(
-          //       color: const Color(0xFFC55252),
-          //       borderRadius: BorderRadius.circular(20)),
-          //   child: const Text('MARLBORO RED',
-          //       style: TextStyle(fontSize: 25, color: Colors.white)),
-          // )
+          user.currentPack?.logo ?? const Text('Чел хуесос без сигарет'),
         ],
       ),
     );
