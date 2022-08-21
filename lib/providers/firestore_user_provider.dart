@@ -25,11 +25,12 @@ class FirestoreUserProvider {
     return usersJson.map((e) => User.fromJson(e)).toList();
   }
 
-  Future<User?> getCurrentUser(String id) {
+  Future<User?> getCurrentUser(String id) async{
     if (currentUser != null) {
       return Future.delayed(Duration.zero, () => currentUser);
     }
-    return getUserById(id);
+    currentUser = await getUserById(id);
+    return currentUser;
   }
 
   Future<void> updateCurrentUser({
@@ -55,8 +56,9 @@ class FirestoreUserProvider {
                 imageUrl != null ||
                 lastPosition != null ||
                 currentPack != null)));
-    if (currentUser == null)
-      throw Exception('You can not update user while sign-out');
+    if (currentUser == null) {
+      throw 'You can not update user while sign-out';
+    }
     if (user != null) {
       _usersCollection.doc(user.id).set(user.toJson());
       currentUser = user;
@@ -69,5 +71,6 @@ class FirestoreUserProvider {
         currentPack: currentPack,
         name: name,
         rank: rank);
+    _usersCollection.doc(currentUser!.id).set(currentUser!.toJson());
   }
 }

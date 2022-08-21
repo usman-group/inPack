@@ -11,7 +11,7 @@ class UserCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final NetworkImage userImage =
         NetworkImage(user.imageUrl ?? defaultUserImageUrl);
-    final String userName = user.name;
+    final String userName = user.name ?? 'Безымянный стрелок';
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(20),

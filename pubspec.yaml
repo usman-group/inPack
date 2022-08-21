@@ -25,12 +25,11 @@ dependencies:
   file_picker:
   image_picker:
   path_provider:
-  open_file:
   faker:
   mime:
   http:
   equatable:
-  # Map
+  cached_network_image: ^3.2.1
   flutter_map:
   flutter_map_marker_cluster: ^0.5.0
   geolocator: ^9.0.1
@@ -47,9 +46,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-     - assets/images/minion.jpg
-     - assets/images/marlboro_red.png
-     - assets/images/winston_blue_super_slims.png
+     - assets/images/
 
   fonts:
      - family: Roboto

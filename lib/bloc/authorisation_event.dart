@@ -3,6 +3,11 @@ part of 'authorisation_bloc.dart';
 @immutable
 abstract class AuthorisationEvent {}
 
+class LogOut extends AuthorisationEvent {
+  LogOut({required this.context});
+  final BuildContext context;
+}
+
 class LogIn extends AuthorisationEvent {
   LogIn(
       {required this.email,
@@ -14,8 +19,6 @@ class LogIn extends AuthorisationEvent {
   final String email;
   final String password;
 }
-
-class LogOut extends AuthorisationEvent {}
 
 class Register extends AuthorisationEvent {
   Register(

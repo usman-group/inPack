@@ -2,27 +2,35 @@ part of 'map_bloc.dart';
 
 @immutable
 abstract class MapEvent {
-  const MapEvent();
+  final BuildContext context;
+  final MapController mapController;
+  const MapEvent({required this.mapController, required this.context});
 }
 
 class RequestLocation extends MapEvent {
-  final MapController mapController;
-  const RequestLocation(this.mapController);
+  const RequestLocation({required super.mapController, required super.context});
+
 }
 
-class MoveToUser extends MapEvent {}
+class MoveToUser extends MapEvent {
+  const MoveToUser({required super.mapController, required super.context});
+}
 
 class MoveToCurrentPosition extends MapEvent {
-  final MapController mapController;
-  const MoveToCurrentPosition(this.mapController);
+  const MoveToCurrentPosition({required super.mapController, required super.context});
+
 }
 
 class AddMarker extends MapEvent {
-  final Marker marker;
-  const AddMarker(this.marker);
+  final EquatableMarker marker;
+
+  const AddMarker({required super.mapController, required super.context, required this.marker});
+
 }
 
 class RemoveMarker extends MapEvent {
-  final Marker marker;
-  const RemoveMarker(this.marker);
+  final EquatableMarker marker;
+
+  const RemoveMarker({ required this.marker, required super.mapController, required super.context});
+
 }

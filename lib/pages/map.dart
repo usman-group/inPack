@@ -4,20 +4,13 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:in_pack/bloc/map_bloc.dart';
 import 'package:in_pack/markers/markers.dart';
-import 'package:in_pack/widgets/bottom_navbar.dart';
 import 'package:latlong2/latlong.dart';
 
-class MapPage extends StatefulWidget implements NavigationBarPage {
+class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
 
   @override
   State<MapPage> createState() => _MapPageState();
-
-  @override
-  Icon get icon => const Icon(Icons.maps_home_work_rounded);
-
-  @override
-  String get label => 'Карта';
 }
 
 class _MapPageState extends State<MapPage> {
@@ -29,7 +22,8 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     _bloc = context.read<MapBloc>();
-    _bloc.add(RequestLocation(_mapController));
+    _bloc.add(MoveToCurrentPosition(mapController: _mapController, context: context));
+    _bloc.add(RequestLocation(mapController: _mapController, context: context));
     super.initState();
   }
 
@@ -75,7 +69,7 @@ class _MapPageState extends State<MapPage> {
                 fitBoundsOptions: const FitBoundsOptions(
                   padding: EdgeInsets.all(50),
                 ),
-                markers: state.markers,
+                markers: state.markers.toList(),
                 polygonOptions: const PolygonOptions(
                     borderColor: Colors.blueAccent,
                     color: Colors.black12,
@@ -103,7 +97,7 @@ class _MapPageState extends State<MapPage> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              _bloc.add(MoveToCurrentPosition(_mapController));
+              _bloc.add(MoveToCurrentPosition(mapController: _mapController, context: context));
             },
             child: const Icon(
               Icons.navigation_sharp,

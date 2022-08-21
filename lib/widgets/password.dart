@@ -5,9 +5,7 @@ class PasswordFormField extends StatefulWidget {
   final TextEditingController passwordController;
   final GlobalKey<FormState> formKey;
   const PasswordFormField(
-      {super.key,
-      required this.passwordController,
-      required this.formKey});
+      {super.key, required this.passwordController, required this.formKey});
 
   @override
   State<PasswordFormField> createState() => _PasswordFormFieldState();
@@ -31,7 +29,7 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
               Radius.circular(8),
             ),
           ),
-          labelText: 'Password',
+          labelText: 'Пароль',
           suffixIcon: GestureDetector(
             onTap: (() {
               setState(() {

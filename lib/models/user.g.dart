@@ -9,7 +9,7 @@ part of 'user.dart';
 User _$UserFromJson(Map<String, dynamic> json) => User(
       id: json['id'] as String,
       lastSeen: DateTime.parse(json['lastSeen'] as String),
-      name: json['name'] as String,
+      name: json['name'] as String?,
       rank: $enumDecode(_$RankEnumMap, json['rank']),
       imageUrl: json['imageUrl'] as String?,
       lastPosition: _$JsonConverterFromJson<String, Position>(

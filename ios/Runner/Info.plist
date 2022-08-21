@@ -11,6 +11,12 @@
     <string>Older devices need location.</string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string>Can I have location always?</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Image pick for avatar in profile</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera for spy on you</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone for spy on you</string>
 	
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

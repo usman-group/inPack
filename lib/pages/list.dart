@@ -1,18 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:in_pack/widgets/bottom_navbar.dart';
 
-class ListPage extends StatefulWidget implements NavigationBarPage {
+class ListPage extends StatefulWidget{
   const ListPage({Key? key}) : super(key: key);
 
   @override
   State<ListPage> createState() => _ListPageState();
 
-  @override
-  Icon get icon => const Icon(Icons.list);
-
-  @override
-  String get label => 'Список';
 }
 
 class _ListPageState extends State<ListPage> {

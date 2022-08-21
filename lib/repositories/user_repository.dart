@@ -21,7 +21,7 @@ class UserRepository {
   Future<User> signUp(
       {required String email,
       required String password,
-      String name = 'Нет имени',
+      String? name,
       String? imageUrl,
       Rank? rank}) async {
     final authUser = await _fAuthProvider.signUp(email, password);
@@ -49,8 +49,7 @@ class UserRepository {
     dynamic user = await _fAuthProvider.signIn(email, password);
     user = _firestoreProvider.getUserById(user.uid).then((value) {
       if (value == null) {
-        throw Exception(
-            'User has not register successfully. Try to delete user from firebase auth');
+        throw 'User has not register successfully. Try to delete user from firebase auth';
       }
       return value;
     });
@@ -71,7 +70,8 @@ class UserRepository {
     return allUsers.then((value) => value..remove(currentUser));
   }
 
-  /// Return current user if signed-in else null
+  /// Get current user from [FirebaseFirestore] if user is logged-in
+  /// else return [null]
   Future<User?> get currentUser {
     if (_fAuthProvider.currentUser == null) {
       return Future.delayed(Duration.zero, () => null);

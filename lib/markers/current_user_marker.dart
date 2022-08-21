@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:in_pack/models/user.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'markers.dart';
@@ -46,4 +45,7 @@ class CurrentUserMarker extends MarkerWithPopup {
     // TODO: add popup for current user
     return Container();
   }
+
+  @override
+  List<Object?> get props => const ['Текущий пользователь'];
 }

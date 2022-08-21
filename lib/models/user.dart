@@ -16,8 +16,8 @@ class User extends Equatable {
   const User(
       {required this.id,
       required this.lastSeen,
-      required this.name,
       required this.rank,
+      this.name,
       this.imageUrl,
       this.lastPosition,
       this.currentPack});
@@ -29,7 +29,7 @@ class User extends Equatable {
   final DateTime lastSeen;
 
   /// Name that will show in user card and user profile
-  final String name;
+  final String? name;
 
   /// URL of image that will be used as user avatar
   final String? imageUrl;
